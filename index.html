@@ -224,6 +224,18 @@ const LESSONS = [
        note:'你把 (n) => {...} 這台小機器「交給」forEach，它在對的時機（每個元素）幫你按一次。這個被交出去、等別人按的函式，就叫 callback。'}
     ],
     key:'💡 函式 = 果汁機：<code>function 名字(參數){ return 成品 }</code> 做機器、<code>名字(...)</code> 按下去用。<b>return</b> 把成品交給你、<b>console.log</b> 只是顯示。箭頭函式是短寫法；把函式交給別人按 = <b>callback</b>。',
+    deepLabel:'再深入一點（函式進階，但很重要 — 這裡沒學好，後面會累）',
+    deep:[
+      {label:'① 同一台機器，丟不同東西 → 不同結果（這才是「重複用」）', code:'function greet(name) {\n  return "嗨 " + name;\n}\n\ngreet("小華");   // "嗨 小華"\ngreet("阿明");   // "嗨 阿明"  ← 同一台機器，丟不同人',
+       note:'name 只是「暫時代號」，呼叫時丟的值會自動對進去。多個參數要「對號入座」，位置很重要：greet(名字, 年齡) 跟 greet(年齡, 名字) 結果會錯。'},
+      {label:'② ⭐ 最關鍵：greet（機器本身）vs greet()（按下去）', code:'greet      // 機器本身（那台果汁機，還沒按）\ngreet()    // 按下去 → 拿到成品\n\n// callback 是把「機器本身」交出去，讓別人之後按：\nsetTimeout(greet, 1000);    // ✅ 交機器，1 秒後它幫你按\nsetTimeout(greet(), 1000);  // ❌ 你「現在就按了」，交出去的是成品',
+       note:'要「交機器」就不加 ()；要「現在拿成品」才加 ()。這是新手最常踩的坑，也是 callback 的核心。'},
+      {label:'③ 沒 return → 拿到 undefined；return 會「中止」函式', code:'function noReturn(x) {\n  x * 2;            // 算了，但沒交出來\n}\nconst r = noReturn(5);   // r 是 undefined！\n\nfunction test() {\n  return "我先走";\n  console.log("我不會被執行");   // return 之後就到不了\n}',
+       note:'忘了寫 return → 呼叫它得到 undefined（新手常卡這）。return 一執行，函式立刻結束，後面不會跑。'},
+      {label:'④ 作用域：函式裡的變數，外面看不到', code:'function makeJuice() {\n  const fruit = "蘋果";   // 只活在這個函式「房間」裡\n  return fruit + "汁";\n}\n\nmakeJuice();          // "蘋果汁"\nconsole.log(fruit);   // 報錯！外面看不到房間裡的 fruit',
+       note:'函式像一個「房間」，裡面宣告的變數只有房間內用得到。好處：每台機器自己管自己，不會互相打架。'}
+    ],
+    deepKey:'💡 串起來：函式是一種「值」（能存進變數、能傳給別人），所以才能把「機器本身」交出去當 callback —— 別人在對的時機 <code>按下去()</code>。記住：參數對號入座、沒 return 給 undefined、變數關在房間裡、交機器不加 ()。',
     p2intro:'Node 到處在「把函式當參數送出去」，看懂這個就不怕那一堆 =&gt;：',
     p2:[
       {code:'http.createServer((req, res) => {\n  // 每次有人來請求，這裡就跑一次\n});',
@@ -241,7 +253,10 @@ const LESSONS = [
        ans:'對。丟 5 進去（投料口 x），吐出 5 × 2 = 10。'},
       {ask:'<code>createServer((req, res) => {})</code> 裡的 <code>(req, res) => {}</code> 是？',
        opts:[['一個函式（callback），被當參數傳進去',true],['一個物件',false]],
-       ans:'對。把函式當禮物送給 createServer，由它在每次請求時呼叫。'}
+       ans:'對。把函式當禮物送給 createServer，由它在每次請求時呼叫。'},
+      {ask:'要把「函式機器本身」交給別人之後按，應該寫哪個？',
+       opts:[['<code>setTimeout(greet, 1000)</code>（不加括號 = 交機器）',true],['<code>setTimeout(greet(), 1000)</code>（加括號 = 你現在就按了）',false]],
+       ans:'對。不加 () = 交出機器本身讓別人按；加 () = 現在就按、交出去的是成品。callback 都是交機器，所以不加 ()。'}
     ]
   },
   {
@@ -408,6 +423,12 @@ function renderPanel(){
   h += '<div class="concept">'+s.concept+'</div>';
   s.blocks.forEach(b=>{ h += codeBlock(b); });
   h += '<div class="key">'+s.key+'</div>';
+
+  if(s.deep){
+    h += '<div class="partlabel">'+(s.deepLabel || '再深入一點')+'</div>';
+    s.deep.forEach(b=>{ h += codeBlock(b); });
+    if(s.deepKey){ h += '<div class="key">'+s.deepKey+'</div>'; }
+  }
 
   h += '<div class="partlabel">'+(s.part2label || 'PART 2 ── 延伸到 Node.js（原來如此）')+'</div>';
   h += '<p class="p2intro">'+s.p2intro+'</p>';
