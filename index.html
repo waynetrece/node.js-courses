@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JS → Node.js 銜接教學</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f6f2; --card:#ffffff; --ink:#1f2421; --muted:#6b6f6a; --line:#e6e3da;
+    --accent:#0f6e56; --accent-soft:#e1f5ee; --accent-ink:#0a4f3e;
+    --indigo:#534ab7; --indigo-soft:#eeedfe;
+    --amber:#854f0b; --amber-soft:#faeeda;
+    --code-bg:#1f2430; --code-ink:#e6e7eb;
+    --ok:#1d7a4d; --ok-soft:#e7f5ec; --bad:#b3261e; --bad-soft:#fbeaea;
+    --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#16181a; --card:#1f2326; --ink:#e9eae6; --muted:#9aa09a; --line:#31363a;
+      --accent:#5dcaa5; --accent-soft:#0f342b; --accent-ink:#9fe1cb;
+      --indigo:#afa9ec; --indigo-soft:#26215c; --amber:#ef9f27; --amber-soft:#412402;
+      --code-bg:#11141a; --code-ink:#e6e7eb;
+      --ok:#5dcaa5; --ok-soft:#103a2b; --bad:#f09595; --bad-soft:#3a1614; }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif; line-height:1.7;
+    -webkit-font-smoothing:antialiased;}
+  code{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.9em;
+    background:rgba(125,125,125,.14); padding:1px 5px; border-radius:5px;}
+  .wrap{max-width:880px; margin:0 auto; padding:32px 20px 90px;}
+  header h1{font-size:25px; font-weight:700; margin:0 0 4px;}
+  header p{margin:0; color:var(--muted); font-size:15px;}
+  .prog{margin:20px 0 8px; display:flex; align-items:center; gap:12px;}
+  .bar{flex:1; height:8px; background:var(--line); border-radius:99px; overflow:hidden;}
+  .bar > span{display:block; height:100%; background:var(--accent); width:0; transition:width .35s ease;}
+  .prog .count{font-size:13px; color:var(--muted); min-width:90px; text-align:right;}
+  nav{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 24px;}
+  .tab{display:flex; align-items:center; gap:8px; padding:9px 14px; border:1px solid var(--line);
+    background:var(--card); border-radius:99px; cursor:pointer; font-size:14px; color:var(--ink);
+    font-family:inherit; transition:.15s;}
+  .tab:hover{border-color:var(--accent);}
+  .tab.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .tab .n{font-weight:700;}
+  .tab .dot{width:7px; height:7px; border-radius:50%; background:transparent; border:1.5px solid currentColor; opacity:.5;}
+  .tab.done .dot{background:#1d9e75; border-color:#1d9e75; opacity:1;}
+  .tab.active.done .dot{background:#fff; border-color:#fff;}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 28px; box-shadow:var(--shadow);}
+  .badge{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); font-weight:700; font-size:16px; flex-shrink:0;}
+  .ttl-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .ttl-row h2{font-size:20px; font-weight:700; margin:0;}
+  .maps{margin:14px 0 0; font-size:13.5px; color:var(--muted);}
+  .maps code{font-size:.92em;}
+  .partlabel{font-size:15px; font-weight:700; color:var(--accent); margin:30px 0 12px;
+    padding-top:18px; border-top:2px solid var(--line);}
+  .concept{font-size:15.5px; line-height:1.85;}
+  .concept b{color:var(--accent); font-weight:500;}
+  .blklabel{font-size:13px; color:var(--muted); margin:16px 0 6px;}
+  pre{margin:0; background:var(--code-bg); color:var(--code-ink); padding:14px 16px; border-radius:10px;
+    overflow-x:auto; line-height:1.6;}
+  pre code{background:none; padding:0; color:inherit; font-size:13.5px; white-space:pre;
+    font-variant-ligatures:none; font-feature-settings:"liga" 0,"calt" 0;}
+  .codenote{font-size:13.5px; color:var(--muted); margin:7px 0 0; padding-left:2px;}
+  .key{margin:18px 0 0; padding:13px 16px; background:var(--accent-soft); color:var(--accent-ink);
+    border-radius:10px; font-size:15px; font-weight:500;}
+  .p2intro{font-size:15.5px; margin:0 0 6px;}
+  .nodeitem{margin:16px 0 0;}
+  .explain{font-size:14.5px; color:var(--muted); margin:7px 0 0; padding-left:2px;}
+  .explain b{color:var(--ink); font-weight:500;}
+  .q{border-top:1px solid var(--line); padding-top:16px; margin-top:16px;}
+  .q .ask{font-weight:500; margin:0 0 10px; font-size:15.5px;}
+  .opt{display:block; width:100%; text-align:left; margin:7px 0; padding:11px 14px; font-size:15px;
+    border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink);
+    cursor:pointer; font-family:inherit; transition:.12s;}
+  .opt:hover:not(:disabled){border-color:var(--accent); background:var(--accent-soft);}
+  .opt:disabled{cursor:default;}
+  .opt.right{background:var(--ok-soft); border-color:var(--ok); color:var(--ok);}
+  .opt.wrong{background:var(--bad-soft); border-color:var(--bad); color:var(--bad);}
+  .ans{display:none; margin:8px 0 0; font-size:14px; color:var(--ok); background:var(--ok-soft);
+    padding:9px 12px; border-radius:8px;}
+  .foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:30px; flex-wrap:wrap;}
+  .nav-btns{display:flex; gap:8px;}
+  button.ghost{padding:10px 16px; font-size:14px; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); border-radius:10px; cursor:pointer; font-family:inherit;}
+  button.ghost:hover:not(:disabled){border-color:var(--accent);}
+  button.ghost:disabled{opacity:.4; cursor:default;}
+  button.mark{padding:11px 18px; font-size:14px; font-weight:500; border-radius:10px; cursor:pointer;
+    font-family:inherit; border:1px solid var(--accent); background:var(--accent); color:#fff;}
+  button.mark.is-done{background:var(--ok-soft); color:var(--ok); border-color:var(--ok);}
+  .tip{margin-top:26px; font-size:13.5px; color:var(--muted); text-align:center;}
+  .reset{background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer; text-decoration:underline; font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>JS → Node.js 銜接教學</h1>
+    <p>給新手：先把 JS 觀念弄懂 → 再看它怎麼延伸到 Node.js · 7 課打通地基</p>
+  </header>
+
+  <div class="prog">
+    <div class="bar"><span id="barFill"></span></div>
+    <div class="count" id="count">學完 0 / 7</div>
+  </div>
+
+  <nav id="tabs"></nav>
+  <div class="panel" id="panel"></div>
+
+  <div class="tip">進度自動存在這台瀏覽器 · 一課一課來，看得到終點 · <button class="reset" id="reset">清除進度重來</button></div>
+</div>
+
+<script>
+const LESSONS = [
+  {
+    js:"物件", maps:'<code>req.url</code> · <code>data.title</code> · <code>module.exports</code>',
+    concept:
+      '先想一個生活情境：你手機裡的一個<b>聯絡人</b>。<br><br>'+
+      '一個聯絡人不會只記一筆資料，而是把一整組相關的東西收在一起：<br>'+
+      '名字 → 小華　｜　電話 → 0912-345-678　｜　email → hua@mail.com<br><br>'+
+      '這種「<b>把相關資料打包成一組</b>」的東西，在 JavaScript 裡就叫<b>物件（object）</b>。<br><br>'+
+      '每一列都有兩個部分：<br>'+
+      '・左邊（名字、電話）是這格的<b>標籤</b>，叫 <code>key</code>（鍵）<br>'+
+      '・右邊（小華、0912…）是<b>內容</b>，叫 <code>value</code>（值）<br><br>'+
+      '為什麼要用它？不然你得寫三個散落的變數 <code>name</code>、<code>phone</code>、<code>email</code>；用物件就能把它們收進同一個 <code>member</code> 裡，乾淨又好找。',
+    blocks:[
+      {label:'怎麼建立一個物件', code:'const member = {\n  name: "小華",\n  age: 25,\n  city: "台北"\n};',
+       note:'用大括號 { } 包起來，裡面每組是 key: value，組跟組之間用逗號分開。'},
+      {label:'怎麼把裡面的值「讀出來」（兩種寫法，結果一樣）', code:'console.log(member.name);      // 小華   ← 點記法（最常用）\nconsole.log(member["age"]);    // 25     ← 括號記法',
+       note:'member.name 你就讀成：「去 member 這張卡，拿 name 這格的值」。'}
+    ],
+    key:'💡 記這句就好：<code>物件.屬性</code> = 從物件裡拿出某一格的值。',
+    p2intro:'現在回頭看 Node 影片裡那些「看不懂的東西」，其實全部都是在讀物件：',
+    p2:[
+      {code:'http.createServer((req, res) => {\n  console.log(req.url);     // 例如 "/todos"\n  console.log(req.method);  // 例如 "GET"\n});',
+       explain:'<code>req</code> 就是一張「<b>對方送來的請求卡</b>」，裡面有 url、method 等格子。<code>req.url</code> 跟剛剛的 <code>member.name</code> 是一模一樣的招式。'},
+      {code:'const data = { title: "買牛奶" };\nconsole.log(data.title);   // 買牛奶',
+       explain:'你卡的 POST 那段裡的 <code>data.title</code>，也是同一招 —— 從 data 物件拿 title。'},
+      {code:'module.exports = { sayHello, add };',
+       explain:'這也是一個物件！意思是「<b>這個檔案對外公開 sayHello 和 add 這兩格</b>」。'}
+    ],
+    p2end:'🔑 Node 裡的 <code>req</code>、<code>res</code>、<code>data</code>、<code>module.exports</code> 都是物件。只要會 <code>物件.屬性</code>，你就讀得懂一半的 Node 程式碼。',
+    practice:[
+      {ask:'有 <code>const todo = { title: "寫作業", done: false };</code>，我要拿出 <code>"寫作業"</code>，要怎麼寫？',
+       opts:[['<code>todo.title</code>',true],['<code>todo["寫作業"]</code>',false],['<code>title.todo</code>',false]],
+       ans:'對。todo.title = 從 todo 拿 title 那格。'},
+      {ask:'同一個物件，<code>todo.done</code> 會得到什麼？',
+       opts:[['<code>false</code>',true],['字串 "done"',false],['undefined',false]],
+       ans:'對。done 那格的值就是 false。'}
+    ]
+  },
+  {
+    js:"解構賦值", maps:'<code>const { x } = require(...)</code>',
+    concept:
+      '你有一個物件（像上一課的聯絡人卡）。平常要拿資料，得一直寫 <code>member.name</code>、<code>member.age</code>… 有點煩。<br><br>'+
+      '<b>解構賦值</b>就是「<b>一次把想要的幾格，拆出來變成獨立變數</b>」。<br><br>'+
+      '想像便當：你不會每次吃都把手伸進便當盒夾，而是先把要吃的菜<b>一次夾到自己盤子上</b>，之後直接吃。解構就是這個「先夾到盤子上」的動作。',
+    blocks:[
+      {label:'傳統寫法 vs 解構寫法（兩者完全等價）', code:'const member = { name: "小華", age: 25 };\n\n// 傳統：一行一行拿\nconst name = member.name;\nconst age = member.age;\n\n// 解構：一行搞定\nconst { name, age } = member;',
+       note:'大括號裡的名字，要跟物件的 key 一樣，程式才知道你要拿哪一格。'}
+    ],
+    key:'💡 <code>const { a, b } = 物件</code> = 把物件裡的 a、b 兩格，拆成兩個獨立變數。',
+    p2intro:'看到 require 前面有一對 { }，就是在「解構模組」：',
+    p2:[
+      {code:'const { sayHello, add } = require("./utils");\n\nsayHello("小華");   // 之後直接用，不用寫 模組.sayHello',
+       explain:'<code>require("./utils")</code> 會回傳一個物件 <code>{ sayHello, add }</code>。解構就是把這兩個功能<b>拆出來直接用</b>。'},
+      {code:'const { v4: uuidv4 } = require("uuid");',
+       explain:'冒號是「<b>順便改名字</b>」 —— 把拿出來的 v4 改叫 uuidv4，之後寫 <code>uuidv4()</code> 就好。'}
+    ],
+    p2end:'🔑 看到 <code>const { ... } = require(...)</code>，就是「從模組這個物件，把要用的功能拆出來」。這關卡住，其實是上一課「物件」還沒穩。',
+    practice:[
+      {ask:'<code>const obj = { a: 1, b: 2 }; const { a } = obj;</code> 之後 <code>a</code> 是？',
+       opts:[['<code>1</code>',true],['<code>{ a: 1 }</code>',false],['undefined',false]],
+       ans:'對。解構把 a 那格（值 1）拆出來。'},
+      {ask:'<code>const { sayHello } = require("./utils")</code> 在做什麼？',
+       opts:[['從模組物件裡，把 sayHello 拆出來用',true],['建立一個新函式',false]],
+       ans:'對。require 回傳物件，{ } 把裡面的 sayHello 拆出來。'}
+    ]
+  },
+  {
+    js:"函式 + 箭頭 + callback", maps:'<code>createServer((req,res)=>{})</code> · <code>req.on("data", ...)</code>',
+    concept:
+      '<b>函式</b>就像一台<b>機器</b>：你丟東西進去（參數），它做事，再吐結果出來（return）。寫一次，到處重複用。<br><br>'+
+      '<b>箭頭函式</b>只是同一件事的「比較短的寫法」，用 <code>=&gt;</code>（念「箭頭」）。Node 範例幾乎都用它。<br><br>'+
+      '<b>callback（回呼）</b>：函式還可以<b>當禮物送給別人</b>，讓對方在「對的時機」幫你打開來用。這個被送出去、等別人呼叫的函式，就叫 callback。',
+    blocks:[
+      {label:'一般函式 vs 箭頭函式（做的事一樣）', code:'// 一般函式\nfunction add(a, b) {\n  return a + b;\n}\n\n// 箭頭函式（較短的寫法）\nconst add = (a, b) => {\n  return a + b;\n};\n\nadd(3, 5);   // 8'},
+      {label:'callback：把函式送出去', code:'[1, 2, 3].forEach((n) => {\n  console.log(n);\n});\n// forEach 會「幫你」對每個元素呼叫一次那個函式',
+       note:'那個 (n) => {...} 就是 callback —— 你交給 forEach，它在對的時機幫你呼叫。'}
+    ],
+    key:'💡 callback = 「我先把函式給你，你時機到了再幫我呼叫」。',
+    p2intro:'Node 到處在「把函式當參數送出去」，看懂這個就不怕那一堆 =&gt;：',
+    p2:[
+      {code:'http.createServer((req, res) => {\n  // 每次有人來請求，這裡就跑一次\n});',
+       explain:'你把 <code>(req, res) => {}</code> 這個函式<b>送</b>給 createServer，它會在「每次有請求時」幫你呼叫。跟 forEach 同一個概念。'},
+      {code:'req.on("data", (chunk) => {\n  body += chunk;\n});',
+       explain:'翻成白話：「<b>當有資料進來時</b>，幫我呼叫這個函式」。這就是你卡的 POST body 那段。'}
+    ],
+    p2end:'🔑 看到 <code>(req, res) => {}</code> 被當參數傳進去，它就是一個 callback —— 等對的時機被呼叫。',
+    practice:[
+      {ask:'<code>const f = (x) => { return x * 2; };</code>，<code>f(5)</code> 是？',
+       opts:[['<code>10</code>',true],['<code>5</code>',false],['<code>x * 2</code>',false]],
+       ans:'對。丟 5 進去，吐出 5 × 2 = 10。'},
+      {ask:'<code>createServer((req, res) => {})</code> 裡的 <code>(req, res) => {}</code> 是？',
+       opts:[['一個函式（callback），被當參數傳進去',true],['一個物件',false]],
+       ans:'對。把函式當禮物送給 createServer，由它在每次請求時呼叫。'}
+    ]
+  },
+  {
+    js:"條件判斷 if / === / &&", maps:'API 路由判斷',
+    concept:
+      '<b>if</b> 就是「<b>如果…就…</b>」的分岔路：程式走到這裡，依條件決定走哪一條。<br><br>'+
+      '<b><code>===</code>（嚴格相等）</b>：判斷「是不是完全一樣」。新手一律用三個等號 <code>===</code>，別用 <code>==</code>。<br><br>'+
+      '<b><code>&&</code>（而且）</b>：兩邊<b>都</b>成立，整句才算成立。',
+    blocks:[
+      {label:'if / else 分岔', code:'const age = 20;\n\nif (age >= 18) {\n  console.log("成年");\n} else {\n  console.log("未成年");\n}'},
+      {label:'=== 和 && 的行為', code:'console.log(1 === 1);      // true\nconsole.log(1 === "1");    // false  （數字1 不等於 字串"1"）\n\nconsole.log(true && true);   // true\nconsole.log(true && false);  // false  （有一邊不成立就 false）'}
+    ],
+    key:'💡 <code>===</code> 比「是不是完全一樣」；<code>&&</code> 要「兩邊都成立」。',
+    p2intro:'API 的「路由」其實就是一堆 if 判斷：',
+    p2:[
+      {code:'if (req.url === "/todos" && req.method === "GET") {\n  // 取得全部待辦\n}',
+       explain:'白話：「<b>如果</b> 對方要的路徑是 /todos <b>而且</b> 動作是 GET，<b>就</b>做取得全部」。url 和 method 兩個都要對，所以用 <code>&&</code>。'}
+    ],
+    p2end:'🔑 API 路由 = 用 if 判斷 <code>req.url</code> + <code>req.method</code>，決定這次請求要做什麼。',
+    practice:[
+      {ask:'<code>1 === "1"</code> 的結果是？',
+       opts:[['<code>false</code>（數字不等於字串）',true],['<code>true</code>',false]],
+       ans:'對。=== 連型別都要一樣，數字 1 ≠ 字串 "1"。'},
+      {ask:'路由為什麼要用 <code>&&</code> 同時判斷 url 和 method？',
+       opts:[['因為 /todos 的 GET 和 POST 是不同功能，兩個都要符合',true],['習慣而已',false]],
+       ans:'對。同網址不同動作 = 不同功能，所以兩個條件都要成立。'}
+    ]
+  },
+  {
+    js:"字串 ↔ JSON 互轉", maps:'<code>JSON.parse</code> · <code>JSON.stringify</code>',
+    concept:
+      '這課解決你卡最久的 POST。先記一個畫面：<br><br>'+
+      '・<b>物件</b>是「<b>活的、能直接用</b>的資料」 —— 能 <code>.title</code> 拿值。<br>'+
+      '・<b>JSON 字串</b>是「<b>打包好、能寄出去</b>的快遞箱」 —— 就是一長串文字。<br><br>'+
+      '網路上只能寄「文字」，不能直接寄「活物件」。所以兩邊要互相轉換：<br><br>'+
+      '・<code>JSON.stringify(物件)</code> → 變字串（<b>打包</b>，準備寄出）<br>'+
+      '・<code>JSON.parse(字串)</code> → 變回物件（<b>拆箱</b>，才能用）',
+    blocks:[
+      {label:'打包與拆箱', code:'const obj = { title: "買牛奶" };\n\nconst text = JSON.stringify(obj);   // \'{"title":"買牛奶"}\'  ← 字串\nconst back = JSON.parse(text);      // { title: "買牛奶" }   ← 物件\n\nconsole.log(back.title);            // 買牛奶',
+       note:'物件可以 .title；JSON 字串不行（它只是一串文字，要先 parse 拆箱）。'}
+    ],
+    key:'💡 出去先 <code>stringify</code>（打包成字串），進來先 <code>parse</code>（拆箱成物件）。',
+    p2intro:'這就是你 POST 那段的核心：',
+    p2:[
+      {code:'req.on("end", () => {\n  const data = JSON.parse(body);   // body 是字串 → 拆箱成物件\n  console.log(data.title);        // 這樣才讀得到\n});',
+       explain:'收到的 <code>body</code> 是字串（快遞箱），要先 <code>JSON.parse</code> 拆箱，才能 <code>.title</code>。'},
+      {code:'res.end(JSON.stringify(todos));   // 回傳前打包成字串',
+       explain:'要回傳給前端前，先 <code>JSON.stringify</code> 把物件打包成字串再送出。'}
+    ],
+    p2end:'🔑 進來先 parse、出去先 stringify。忘了 parse → 讀 .title 是 undefined，這就是最常卡的地方。',
+    practice:[
+      {ask:'<code>JSON.stringify(物件)</code> 是在做什麼？',
+       opts:[['物件 → 字串（打包）',true],['字串 → 物件（拆箱）',false]],
+       ans:'對。stringify = 打包成字串，準備寄出。'},
+      {ask:'POST 進來的 <code>body</code>，為什麼不能直接 <code>body.title</code>？',
+       opts:[['它是字串，要先 <code>JSON.parse</code> 變物件',true],['title 還沒設定',false]],
+       ans:'對。字串不能 .title，要先拆箱成物件。'}
+    ]
+  },
+  {
+    js:"陣列 + push / filter / map", maps:'<code>todos.push()</code> · 整理資料',
+    concept:
+      '上面學的<b>物件</b>是「<b>一張卡</b>」。這課的<b>陣列（array）</b>是「<b>一排有順序的盒子</b>」，也就是一個清單。<br><br>'+
+      '陣列裡可以放數字、字串，也可以放<b>一疊物件</b>（一疊卡）。後端的資料常常就是「一個裝著很多物件的陣列」。',
+    blocks:[
+      {label:'陣列基本：讀取與長度', code:'const todos = ["寫作業", "買牛奶"];\n\nconsole.log(todos[0]);       // 寫作業  ← 從 0 開始數\nconsole.log(todos.length);   // 2'},
+      {label:'三個最常用的方法', code:'const nums = [1, 2, 3, 4];\n\ntodos.push("運動");                 // 加到尾巴\nconst big = nums.filter((n) => n > 2);   // [3, 4]  篩選符合的\nconst dbl = nums.map((n) => n * 2);      // [2,4,6,8]  每個都改造',
+       note:'filter / map 裡面那個 (n) => ... 就是第 3 課的 callback。'}
+    ],
+    key:'💡 <code>push</code> 加資料、<code>filter</code> 篩資料、<code>map</code> 改造每一筆。',
+    p2intro:'後端天天用陣列裝資料、處理資料：',
+    p2:[
+      {code:'todos.push({ title: data.title, id: uuidv4() });',
+       explain:'把一筆新的 todo <b>物件</b>，加到 todos 這個清單的尾巴。（陣列裡裝物件 = 一疊卡）'},
+      {code:'const vips = members.filter((m) => m.level === "VIP");\nconst names = members.map((m) => m.name);',
+       explain:'直播第一堂整理會員就用到：<code>filter</code> 篩出 VIP、<code>map</code> 取出每個人的名字。'}
+    ],
+    p2end:'🔑 資料進後端，幾乎都是「裝進陣列 → 用 filter/map 整理 → 回傳」。',
+    practice:[
+      {ask:'<code>const a = [10, 20, 30];</code>，<code>a[0]</code> 是？',
+       opts:[['<code>10</code>（從 0 開始數）',true],['<code>20</code>',false]],
+       ans:'對。陣列從 0 開始數，所以 a[0] 是第一個 10。'},
+      {ask:'<code>[1, 2, 3, 4].filter((n) => n > 2)</code> 得到？',
+       opts:[['<code>[3, 4]</code>',true],['<code>[1, 2]</code>',false],['<code>true</code>',false]],
+       ans:'對。filter 留下「條件成立」的，n > 2 只有 3 和 4。'}
+    ]
+  },
+  {
+    js:"非同步 Promise / async / await", maps:'讀檔 · 打 API · 之後幾乎全部',
+    concept:
+      '這是後端真正的<b>地基</b>。先記一個比喻：<br><br>'+
+      '一家餐廳只有<b>一個老闆</b>（Node 是單線程）。客人點了一道要等的菜（讀檔、打 API、查資料庫），老闆<b>不會站在廚房前乾等</b> —— 他先去接別桌的客人，菜好了再回來上。<br><br>'+
+      '「<b>先去做別的、好了再回來</b>」就是<b>非同步</b>。<br>'+
+      '反過來，如果老闆站著等到菜好才動 = 全店客人都卡住 = 災難，這叫「阻塞」。',
+    blocks:[
+      {label:'async / await 的寫法', code:'async function main() {\n  const text = await fs.readFile("data.json", "utf-8");\n  console.log(text);\n}',
+       note:'await = 「等這件事好」，但等的時候不卡住別人；await 只能寫在 async 函式裡。'},
+      {label:'印出順序（最重要的感覺）', code:'console.log("1");\nmain();          // 裡面遇到 await，先讓出去\nconsole.log("3");\n\n// 印出順序：1 → 3 →（main 的 await 好了才回來跑）',
+       note:'順序會「跳」，正是因為遇到 await 先去做後面的事了。'}
+    ],
+    key:'💡 看到 <code>async / await</code>，就是在處理「要等一下」的事，而且它不會卡住整支程式。',
+    p2intro:'直播第一堂的讀檔、之後的 Express、資料庫、登入驗證，全是非同步：',
+    p2:[
+      {code:'const fs = require("fs/promises");\n\nconst text = await fs.readFile("members.json", "utf-8");\nconst members = JSON.parse(text);',
+       explain:'讀檔要等硬碟，所以用 <code>await</code>。讀完是字串，再用第 5 課的 <code>JSON.parse</code> 變物件 —— 你看，觀念全串起來了。'}
+    ],
+    p2end:'🔑 這關通了，你就有資格往 Express、資料庫前進 —— 因為它們全都是非同步。',
+    practice:[
+      {ask:'<code>await</code> 只能寫在哪裡？',
+       opts:[['<code>async</code> 函式裡面',true],['任何地方都行',false]],
+       ans:'對。沒有 async 包著，await 會直接語法錯誤。'},
+      {ask:'為什麼後端要用非同步？',
+       opts:[['不讓「等待」卡住整台伺服器、害其他人排隊',true],['因為比較快打字',false]],
+       ans:'對。單線程不能卡，等待的事要讓出去，先服務別人。'}
+    ]
+  }
+];
+
+const KEY = "hex-js2node-v1";
+let state = load();
+let active = state.active ?? 0;
+
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {done:{}}; }catch(e){ return {done:{}}; } }
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+const tabsEl = document.getElementById("tabs");
+const panelEl = document.getElementById("panel");
+
+function renderTabs(){
+  tabsEl.innerHTML = "";
+  LESSONS.forEach((s,i)=>{
+    const b = document.createElement("button");
+    b.className = "tab" + (i===active?" active":"") + (state.done[i]?" done":"");
+    b.innerHTML = '<span class="dot"></span><span class="n">'+(i+1)+'</span><span>'+s.js+'</span>';
+    b.onclick = ()=>{ active=i; state.active=i; save(); render(); };
+    tabsEl.appendChild(b);
+  });
+}
+
+function codeBlock(b){
+  let h = '<div class="blklabel">'+b.label+'</div><pre><code>'+esc(b.code)+'</code></pre>';
+  if(b.note) h += '<p class="codenote">'+b.note+'</p>';
+  return h;
+}
+
+function renderPanel(){
+  const s = LESSONS[active];
+  let h = '<div class="ttl-row"><span class="badge">'+(active+1)+'</span><h2>第 '+(active+1)+' 課：'+s.js+'</h2></div>';
+  h += '<p class="maps">這個觀念之後在 Node 變成 → '+s.maps+'</p>';
+
+  h += '<div class="partlabel">PART 1 ── 先把 JS 觀念弄懂</div>';
+  h += '<div class="concept">'+s.concept+'</div>';
+  s.blocks.forEach(b=>{ h += codeBlock(b); });
+  h += '<div class="key">'+s.key+'</div>';
+
+  h += '<div class="partlabel">PART 2 ── 延伸到 Node.js（原來如此）</div>';
+  h += '<p class="p2intro">'+s.p2intro+'</p>';
+  s.p2.forEach(it=>{
+    h += '<div class="nodeitem"><pre><code>'+esc(it.code)+'</code></pre><p class="explain">'+it.explain+'</p></div>';
+  });
+  h += '<div class="key">'+s.p2end+'</div>';
+
+  h += '<div class="partlabel">換你試試（點選看答案）</div>';
+  s.practice.forEach((q,qi)=>{
+    h += '<div class="q"><p class="ask">'+(qi+1)+'. '+q.ask+'</p>';
+    q.opts.forEach(o=>{ h += '<button class="opt" data-correct="'+o[1]+'">'+o[0]+'</button>'; });
+    h += '<p class="ans">'+q.ans+'</p></div>';
+  });
+
+  const done = !!state.done[active];
+  h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" id="markBtn">'+(done?'✓ 這課學完了（點可取消）':'我學完這課了')+'</button>'
+     + '<div class="nav-btns"><button class="ghost" id="prev" '+(active===0?'disabled':'')+'>← 上一課</button>'
+     + '<button class="ghost" id="next" '+(active===LESSONS.length-1?'disabled':'')+'>下一課 →</button></div></div>';
+  panelEl.innerHTML = h;
+
+  panelEl.querySelectorAll(".q").forEach(q=>{
+    const opts = q.querySelectorAll(".opt");
+    opts.forEach(btn=>{
+      btn.onclick = ()=>{
+        opts.forEach(b=>{ b.disabled=true;
+          if(b.dataset.correct==="true") b.classList.add("right");
+          else if(b===btn) b.classList.add("wrong");
+        });
+        q.querySelector(".ans").style.display="block";
+      };
+    });
+  });
+  document.getElementById("markBtn").onclick = ()=>{ state.done[active]=!state.done[active]; save(); render(); };
+  const prev=document.getElementById("prev"), next=document.getElementById("next");
+  if(prev) prev.onclick=()=>{ active=Math.max(0,active-1); state.active=active; save(); render(); };
+  if(next) next.onclick=()=>{ active=Math.min(LESSONS.length-1,active+1); state.active=active; save(); render(); };
+}
+
+function renderProgress(){
+  const n = Object.values(state.done).filter(Boolean).length;
+  document.getElementById("barFill").style.width = (n/LESSONS.length*100)+"%";
+  document.getElementById("count").textContent = "學完 "+n+" / "+LESSONS.length;
+}
+
+function render(){ renderTabs(); renderPanel(); renderProgress(); window.scrollTo({top:0,behavior:"smooth"}); }
+
+document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}}; active=0; save(); render(); } };
+
+render();
+</script>
+</body>
+</html>
