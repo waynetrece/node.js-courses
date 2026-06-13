@@ -144,7 +144,7 @@ const LESSONS = [
       {code:'module.exports = { sayHello, add };',
        explain:'④ <code>module.exports</code>（Node 特殊變數，<b>這個才真的新</b>）= 一家店「<b>對外的出餐窗口</b>」。你把想給別人用的東西擺上窗口，別的檔案才能 <code>require</code> 來拿；沒擺上去的，外面就拿不到。'}
     ],
-    p2mid:'這四個，是靠 <code>createServer</code> 串成一家店的。<b>createServer = 開一家店</b>（做後端、要一直開著等客人上門時用）。傳進去的 <code>(req, res) =&gt; {}</code> = 「<b>接待客人的 SOP</b>」：每來一位客人就照做一次 —— 看他的點餐單（req）、把飲料交還給他（res）。<code>.listen(3000)</code> = 在 3000 號店面開門營業。下面這家小型 Todolist 店，四個東西全在裡面：',
+    p2mid:'這四個，是靠 <code>createServer</code> 串成一家店的。<b>createServer = 開一家店</b>（做後端、要一直開著等客人上門時用）。傳進去的 <code>(req, res) =&gt; {}</code> = 「<b>接待客人的 SOP</b>」：每來一位客人就照做一次 —— 看他的點餐單（req）、把飲料交還給他（res）。<code>.listen(3000)</code> = 在 3000 號店面開門營業。下面這家小型 Todolist 店，四個東西全在裡面 —— <b>這段現在「看懂每一行在幹嘛」就好，不用會默寫；能自己寫是之後的事，我們會慢慢來。</b>',
     p2after:[
       {code:'// utils.js —— 用 module.exports 公開功能\nfunction makeTodo(title) {\n  return { title: title, done: false };\n}\nmodule.exports = { makeTodo };',
        explain:'這支檔案把 makeTodo 擺上「<b>出餐窗口</b>」（④ module.exports），別的檔案才拿得到。'},
