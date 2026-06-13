@@ -170,29 +170,32 @@ const LESSONS = [
   {
     js:"解構賦值", maps:'<code>const { x } = require(...)</code>',
     concept:
-      '你有一個物件（像上一課的聯絡人卡）。平常要拿資料，得一直寫 <code>member.name</code>、<code>member.age</code>… 有點煩。<br><br>'+
-      '<b>解構賦值</b>就是「<b>一次把想要的幾格，拆出來變成獨立變數</b>」。<br><br>'+
-      '想像便當：你不會每次吃都把手伸進便當盒夾，而是先把要吃的菜<b>一次夾到自己盤子上</b>，之後直接吃。解構就是這個「先夾到盤子上」的動作。',
+      '你會覺得「在背」，是因為現在記的是<b>規則</b>。換個方式：記一個<b>畫面</b>，就不用背了。<br><br>'+
+      '想像出門旅行帶一個<b>行李箱</b>（這就是「物件」）：裡面有襪子、牙刷、充電線各一格。<br><br>'+
+      '到飯店要用牙刷，<b>笨方法</b>是每次都開箱：<code>行李箱.牙刷</code>… 等下充電再 <code>行李箱.充電線</code>… 每次都開，很煩。<br><br>'+
+      '<b>解構賦值 = 一進房間就「開箱一次」</b>，把要用的東西拿出來擺到桌上、各自有位置，之後直接拿，不用再開箱。',
     blocks:[
-      {label:'傳統寫法 vs 解構寫法（兩者完全等價）', code:'const member = { name: "小華", age: 25 };\n\n// 傳統：一行一行拿\nconst name = member.name;\nconst age = member.age;\n\n// 解構：一行搞定\nconst { name, age } = member;',
-       note:'大括號裡的名字，要跟物件的 key 一樣，程式才知道你要拿哪一格。'}
+      {label:'笨方法 vs 解構（開箱一次）', code:'const box = { socks: "襪子", brush: "牙刷" };\n\n// 笨方法：每次都開箱\nconsole.log(box.socks);\nconsole.log(box.brush);\n\n// 解構：開箱一次，拿出來各自獨立\nconst { socks, brush } = box;\nconsole.log(socks);   // 之後直接用，不用再 box.',
+       note:'大括號裡的名字，要跟箱子裡那一格一樣 —— 因為你在「指定拿哪一格」。寫 { shoes } 會拿到 undefined，因為箱子裡沒有 shoes。所以不是規定要背，是「想拿哪格就寫哪格」。'},
+      {label:'其實它只是「裝箱」的反向', code:'// 第 1 課：把東西「裝進」物件\nconst member = { name: "小華", age: 25 };\n\n// 這一課：把東西從物件「拿出來」\nconst { name, age } = member;',
+       note:'一個是裝箱、一個是拆箱，同一件事的正反兩面。你已經會裝箱了，拆箱只是反過來。'}
     ],
-    key:'💡 <code>const { a, b } = 物件</code> = 把物件裡的 a、b 兩格，拆成兩個獨立變數。',
-    p2intro:'看到 require 前面有一對 { }，就是在「解構模組」：',
+    key:'💡 看到 <code>const { X } = Y</code>，照這句讀：「<b>從 Y 裡面，把那格叫 X 的，拿出來變成獨立的 X</b>」。記這句讀法，比背規則好用。',
+    p2intro:'看到 require 前面有一對 { }，就是在「<b>開模組的箱子</b>」：',
     p2:[
       {code:'const { sayHello, add } = require("./utils");\n\nsayHello("小華");   // 之後直接用，不用寫 模組.sayHello',
-       explain:'<code>require("./utils")</code> 會回傳一個物件 <code>{ sayHello, add }</code>。解構就是把這兩個功能<b>拆出來直接用</b>。'},
+       explain:'<code>require("./utils")</code> 回傳一個箱子 <code>{ sayHello, add }</code>。解構 = 開箱，把 sayHello 拿出來直接用。讀法：「從 utils 這個箱子，把 sayHello 拿出來」。'},
       {code:'const { v4: uuidv4 } = require("uuid");',
-       explain:'冒號是「<b>順便改名字</b>」 —— 把拿出來的 v4 改叫 uuidv4，之後寫 <code>uuidv4()</code> 就好。'}
+       explain:'冒號 = 開箱時「<b>貼張新標籤</b>」：拿出 v4，但嫌名字爛，改叫 uuidv4，之後寫 <code>uuidv4()</code>。'}
     ],
-    p2end:'🔑 看到 <code>const { ... } = require(...)</code>，就是「從模組這個物件，把要用的功能拆出來」。這關卡住，其實是上一課「物件」還沒穩。',
+    p2end:'🔑 用「開行李箱」想：物件是箱子，解構就是<b>開箱一次、把要的東西拿出來</b>。讀法永遠是「從 Y 把 X 拿出來」，遇到任何解構都套這句，不用背。',
     practice:[
-      {ask:'<code>const obj = { a: 1, b: 2 }; const { a } = obj;</code> 之後 <code>a</code> 是？',
-       opts:[['<code>1</code>',true],['<code>{ a: 1 }</code>',false],['undefined',false]],
-       ans:'對。解構把 a 那格（值 1）拆出來。'},
-      {ask:'<code>const { sayHello } = require("./utils")</code> 在做什麼？',
-       opts:[['從模組物件裡，把 sayHello 拆出來用',true],['建立一個新函式',false]],
-       ans:'對。require 回傳物件，{ } 把裡面的 sayHello 拆出來。'}
+      {ask:'<code>const box = { socks: "襪子" }; const { shoes } = box;</code>，<code>shoes</code> 會是？',
+       opts:[['<code>undefined</code>（箱子裡沒有 shoes 那格）',true],['<code>"襪子"</code>',false],['報錯',false]],
+       ans:'對。大括號的名字要對應箱子裡真的有的那格；沒有 shoes 就拿到 undefined。答對代表你「懂」而不是「背」。'},
+      {ask:'用讀法食譜讀 <code>const { sayHello } = require("./utils")</code>：',
+       opts:[['從 utils 這個箱子，把 sayHello 拿出來用',true],['建立一個叫 sayHello 的新箱子',false]],
+       ans:'對。<code>const { X } = Y</code> 永遠讀成「從 Y 把 X 拿出來」。'}
     ]
   },
   {
