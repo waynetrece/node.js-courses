@@ -216,8 +216,10 @@ const LESSONS = [
        note:'function = 我要做機器｜sayHello = 機器名字（你取的）｜(name) = 投料口，叫「參數」｜{ } = 機器內部做的事｜return = 把成品吐出來。寫 sayHello("小華") = 按下機器、丟小華進去。'},
       {label:'② 超容易混：return vs console.log', code:'function add(a, b) {\n  return a + b;       // 把答案「交到你手上」\n}\n\nconst x = add(3, 5);   // x 真的拿到 8，可以接著用\nconsole.log(x);        // console.log 只是「顯示給你看」',
        note:'return = 把果汁交到你手上（能存、能接著用）；console.log = 只是端給你看一眼（顯示，拿不回來用）。新手常把該 return 的寫成 console.log，結果「看得到 8、拿不到 8」。要拿來用就 return，只想看才 console.log。'},
-      {label:'③ 箭頭函式：同一台機器，短一點的寫法', code:'// 一般寫法\nfunction add(a, b) {\n  return a + b;\n}\n\n// 箭頭寫法（功能一模一樣）\nconst add = (a, b) => {\n  return a + b;\n};',
-       note:'=> 念「箭頭」。做的事完全一樣，只是比較短。Node 範例幾乎都用箭頭，所以要看得懂它。'},
+      {label:'③ 箭頭函式：另一種寫函式的方法（=> 念「箭頭」）', code:'// 這兩個是「同一個函式」，做一樣的事\nfunction add(a, b) { return a + b; }\nconst add = (a, b) => { return a + b; };',
+       note:'看到 => 就知道「這是一個函式」。注意：像 add 這種具名函式，箭頭其實沒比較方便 —— 用 function 也完全 OK，別硬改。'},
+      {label:'③-2 箭頭真正方便的地方：臨時丟給別人的小函式（callback）', code:'// 舊寫法（function 當 callback）——又長又卡\n[1, 2, 3].forEach(function (n) { console.log(n); });\n\n// 箭頭——乾淨多了\n[1, 2, 3].forEach((n) => { console.log(n); });\n\n// 只有一行 return 時，箭頭還能再省（自動回傳）\nconst double = (n) => n * 2;\ndouble(5);   // 10',
+       note:'重點：具名函式用哪個都行；但「臨時寫一個小函式丟給 forEach / createServer」時，箭頭最乾淨，所以 Node 到處是它。你現在只要「看到 => 知道是函式」就夠了。'},
       {label:'④ callback：把「機器」交給別人，讓他幫你按', code:'[1, 2, 3].forEach((n) => {\n  console.log(n);\n});\n// forEach 會對 1、2、3 各「按一次」你給的機器',
        note:'你把 (n) => {...} 這台小機器「交給」forEach，它在對的時機（每個元素）幫你按一次。這個被交出去、等別人按的函式，就叫 callback。'}
     ],
