@@ -99,7 +99,7 @@
 <div class="wrap">
   <header>
     <h1>JS → Node.js 銜接教學</h1>
-    <p>給新手：先把 JS 觀念弄懂 → 再看它怎麼延伸到 Node.js · 7 課打通地基</p>
+    <p>給新手：先把 JS 觀念弄懂 → 再看它怎麼延伸到 Node.js · 7 課地基 + 1 課實戰</p>
   </header>
 
   <div class="prog">
@@ -322,6 +322,44 @@ const LESSONS = [
        opts:[['不讓「等待」卡住整台伺服器、害其他人排隊',true],['因為比較快打字',false]],
        ans:'對。單線程不能卡，等待的事要讓出去，先服務別人。'}
     ]
+  },
+  {
+    js:"實戰：createServer 串起全部",
+    mapsText:'把前面學的物件、函式、JSON，組進一台真正的伺服器',
+    part1label:'PART 1 ── createServer 是什麼、什麼時候用',
+    concept:
+      '前面學的東西，要放進「一台伺服器」才會真的動起來。<b>createServer</b> 就是用來開這台伺服器的。<br><br>'+
+      '什麼情況用它？<b>當你要做後端</b> —— 開一個一直開著、等別人連進來的服務（網站 API、登入、存資料…）就用它。<br><br>'+
+      '<b>用開店來想：</b><br>'+
+      '・<code>http.createServer(...)</code> = 開一家店<br>'+
+      '・傳進去的 <code>(req, res) =&gt; {}</code> 函式 = 店員的「接客 SOP」，每進來一位客人就照做一次（這就是第 3 課的 callback）<br>'+
+      '・<code>req</code> = 客人說的需求；<code>res</code> = 店員的回應<br>'+
+      '・<code>.listen(3000)</code> = 在 3000 號店面開門營業',
+    blocks:[
+      {label:'最小的一台伺服器', code:'const http = require("http");\n\nconst server = http.createServer((req, res) => {\n  res.end("Hello！我是你的伺服器");\n});\n\nserver.listen(3000, () => {\n  console.log("開在 http://localhost:3000");\n});',
+       note:'打開瀏覽器連 http://localhost:3000 就會看到那句話。每次連線，那個函式就跑一次。'}
+    ],
+    key:'💡 createServer 開店、<code>(req,res)=&gt;{}</code> 是接客 SOP、<code>.listen()</code> 開門營業。',
+    part2label:'PART 2 ── req / res / data / module.exports 在一個完整範例裡',
+    p2intro:'把第 1 課的四個東西，全部放進一個小型 Todolist 伺服器看 ——',
+    p2:[
+      {code:'// utils.js —— 用 module.exports 公開功能\nfunction makeTodo(title) {\n  return { title: title, done: false };\n}\n\nmodule.exports = { makeTodo };',
+       explain:'④ <code>module.exports</code>：這支檔案對外<b>公開</b> makeTodo，讓別的檔案能 require 來用。'},
+      {code:'// app.js —— 主程式\nconst http = require("http");\nconst { makeTodo } = require("./utils");   // 解構：拿出 makeTodo\n\nconst todos = [];   // 暫存清單\n\nconst server = http.createServer((req, res) => {\n\n  if (req.url === "/todos" && req.method === "GET") {\n    res.writeHead(200, { "Content-Type": "application/json" });\n    res.end(JSON.stringify(todos));          // 物件 → 字串，回傳\n\n  } else if (req.url === "/todos" && req.method === "POST") {\n    let body = "";\n    req.on("data", (chunk) => { body += chunk; });   // 一段段收\n    req.on("end", () => {\n      const data = JSON.parse(body);         // 字串 → 物件（你自己建的）\n      todos.push(makeTodo(data.title));\n      res.writeHead(200, { "Content-Type": "application/json" });\n      res.end(JSON.stringify(todos));\n    });\n\n  } else {\n    res.writeHead(404);\n    res.end("找不到這個網址");\n  }\n});\n\nserver.listen(3000);',
+       explain:'四個東西全在這：<br>① <code>req</code>：用 <code>req.url</code> / <code>req.method</code> / <code>req.on</code> 看對方要什麼<br>② <code>res</code>：用 <code>res.writeHead</code> / <code>res.end</code> 回東西給對方<br>③ <code>data</code>：<code>JSON.parse(body)</code> 得到的物件，名字你自己取<br>④ <code>module.exports</code>：透過 <code>require("./utils")</code> 把 makeTodo 拿進來用'}
+    ],
+    p2end:'🔑 一台伺服器 = createServer 開店 + 用 req 看需求 + 用 res 回應；資料進來先 parse 成 data、出去先 stringify；功能拆到別檔案用 module.exports 公開。這就是整個 Todolist 影片在做的事。',
+    practice:[
+      {ask:'<code>createServer((req, res) => {})</code> 裡的函式，什麼時候會被執行？',
+       opts:[['每次有人連到伺服器時，就跑一次',true],['程式一開始只跑一次',false],['永遠不會跑',false]],
+       ans:'對。它是 callback，每來一個請求就執行一次（接客 SOP）。'},
+      {ask:'這個範例裡，哪一行是「把功能公開給別的檔案用」？',
+       opts:[['<code>module.exports = { makeTodo }</code>',true],['<code>const todos = []</code>',false],['<code>res.end(...)</code>',false]],
+       ans:'對。module.exports 決定這支檔案對外公開什麼。'},
+      {ask:'<code>server.listen(3000)</code> 的作用是？',
+       opts:[['讓伺服器在 3000 port 開門營業、開始等請求',true],['關閉伺服器',false],['送資料給前端',false]],
+       ans:'對。listen = 開門營業，開始監聽請求。'}
+    ]
   }
 ];
 
@@ -356,14 +394,14 @@ function codeBlock(b){
 function renderPanel(){
   const s = LESSONS[active];
   let h = '<div class="ttl-row"><span class="badge">'+(active+1)+'</span><h2>第 '+(active+1)+' 課：'+s.js+'</h2></div>';
-  h += '<p class="maps">這個觀念之後在 Node 變成 → '+s.maps+'</p>';
+  h += '<p class="maps">'+(s.mapsText || ('這個觀念之後在 Node 變成 → '+s.maps))+'</p>';
 
-  h += '<div class="partlabel">PART 1 ── 先把 JS 觀念弄懂</div>';
+  h += '<div class="partlabel">'+(s.part1label || 'PART 1 ── 先把 JS 觀念弄懂')+'</div>';
   h += '<div class="concept">'+s.concept+'</div>';
   s.blocks.forEach(b=>{ h += codeBlock(b); });
   h += '<div class="key">'+s.key+'</div>';
 
-  h += '<div class="partlabel">PART 2 ── 延伸到 Node.js（原來如此）</div>';
+  h += '<div class="partlabel">'+(s.part2label || 'PART 2 ── 延伸到 Node.js（原來如此）')+'</div>';
   h += '<p class="p2intro">'+s.p2intro+'</p>';
   s.p2.forEach(it=>{
     h += '<div class="nodeitem"><pre><code>'+esc(it.code)+'</code></pre><p class="explain">'+it.explain+'</p></div>';
