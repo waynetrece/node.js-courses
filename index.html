@@ -205,15 +205,23 @@ const LESSONS = [
   {
     js:"函式 + 箭頭 + callback", maps:'<code>createServer((req,res)=>{})</code> · <code>req.on("data", ...)</code>',
     concept:
-      '<b>函式</b>就像一台<b>機器</b>：你丟東西進去（參數），它做事，再吐結果出來（return）。寫一次，到處重複用。<br><br>'+
-      '<b>箭頭函式</b>只是同一件事的「比較短的寫法」，用 <code>=&gt;</code>（念「箭頭」）。Node 範例幾乎都用它。<br><br>'+
-      '<b>callback（回呼）</b>：函式還可以<b>當禮物送給別人</b>，讓對方在「對的時機」幫你打開來用。這個被送出去、等別人呼叫的函式，就叫 callback。',
+      '<b>先問：為什麼需要函式？</b> 假設你要算 BMI，沒有函式，每個地方都得重抄一整段算式，公式一改還要改十個地方。<b>函式 = 把一段「會重複用的工作」打包、取個名字，以後一句話就能叫它做。</b><br><br>'+
+      '把函式想成一台<b>果汁機</b>：<br>'+
+      '・丟水果進去（<b>輸入 = 參數</b>）<br>'+
+      '・它榨汁（<b>做事 = 函式內容</b>）<br>'+
+      '・吐果汁出來（<b>輸出 = return</b>）<br>'+
+      '做好一台，以後丟不同水果都能用 —— <b>寫一次，到處重複用</b>。',
     blocks:[
-      {label:'一般函式 vs 箭頭函式（做的事一樣）', code:'// 一般函式\nfunction add(a, b) {\n  return a + b;\n}\n\n// 箭頭函式（較短的寫法）\nconst add = (a, b) => {\n  return a + b;\n};\n\nadd(3, 5);   // 8'},
-      {label:'callback：把函式送出去', code:'[1, 2, 3].forEach((n) => {\n  console.log(n);\n});\n// forEach 會「幫你」對每個元素呼叫一次那個函式',
-       note:'那個 (n) => {...} 就是 callback —— 你交給 forEach，它在對的時機幫你呼叫。'}
+      {label:'① 怎麼「做一台」函式，再「按下去用」', code:'// 做一台「打招呼」機器\nfunction sayHello(name) {\n  return "嗨 " + name;\n}\n\n// 按下去用它（丟「小華」進去）\nsayHello("小華");   // → "嗨 小華"',
+       note:'function = 我要做機器｜sayHello = 機器名字（你取的）｜(name) = 投料口，叫「參數」｜{ } = 機器內部做的事｜return = 把成品吐出來。寫 sayHello("小華") = 按下機器、丟小華進去。'},
+      {label:'② 超容易混：return vs console.log', code:'function add(a, b) {\n  return a + b;       // 把答案「交到你手上」\n}\n\nconst x = add(3, 5);   // x 真的拿到 8，可以接著用\nconsole.log(x);        // console.log 只是「顯示給你看」',
+       note:'return = 把果汁交到你手上（能存、能接著用）；console.log = 只是端給你看一眼（顯示，拿不回來用）。新手常把該 return 的寫成 console.log，結果「看得到 8、拿不到 8」。要拿來用就 return，只想看才 console.log。'},
+      {label:'③ 箭頭函式：同一台機器，短一點的寫法', code:'// 一般寫法\nfunction add(a, b) {\n  return a + b;\n}\n\n// 箭頭寫法（功能一模一樣）\nconst add = (a, b) => {\n  return a + b;\n};',
+       note:'=> 念「箭頭」。做的事完全一樣，只是比較短。Node 範例幾乎都用箭頭，所以要看得懂它。'},
+      {label:'④ callback：把「機器」交給別人，讓他幫你按', code:'[1, 2, 3].forEach((n) => {\n  console.log(n);\n});\n// forEach 會對 1、2、3 各「按一次」你給的機器',
+       note:'你把 (n) => {...} 這台小機器「交給」forEach，它在對的時機（每個元素）幫你按一次。這個被交出去、等別人按的函式，就叫 callback。'}
     ],
-    key:'💡 callback = 「我先把函式給你，你時機到了再幫我呼叫」。',
+    key:'💡 函式 = 果汁機：<code>function 名字(參數){ return 成品 }</code> 做機器、<code>名字(...)</code> 按下去用。<b>return</b> 把成品交給你、<b>console.log</b> 只是顯示。箭頭函式是短寫法；把函式交給別人按 = <b>callback</b>。',
     p2intro:'Node 到處在「把函式當參數送出去」，看懂這個就不怕那一堆 =&gt;：',
     p2:[
       {code:'http.createServer((req, res) => {\n  // 每次有人來請求，這裡就跑一次\n});',
@@ -223,9 +231,12 @@ const LESSONS = [
     ],
     p2end:'🔑 看到 <code>(req, res) => {}</code> 被當參數傳進去，它就是一個 callback —— 等對的時機被呼叫。',
     practice:[
+      {ask:'函式裡想把答案「交出去給人接著用」，要用哪個？',
+       opts:[['<code>return</code>',true],['<code>console.log</code>',false]],
+       ans:'對。return = 把成品交到手上（能存、能用）；console.log 只是顯示給你看，拿不回來用。'},
       {ask:'<code>const f = (x) => { return x * 2; };</code>，<code>f(5)</code> 是？',
        opts:[['<code>10</code>',true],['<code>5</code>',false],['<code>x * 2</code>',false]],
-       ans:'對。丟 5 進去，吐出 5 × 2 = 10。'},
+       ans:'對。丟 5 進去（投料口 x），吐出 5 × 2 = 10。'},
       {ask:'<code>createServer((req, res) => {})</code> 裡的 <code>(req, res) => {}</code> 是？',
        opts:[['一個函式（callback），被當參數傳進去',true],['一個物件',false]],
        ans:'對。把函式當禮物送給 createServer，由它在每次請求時呼叫。'}
