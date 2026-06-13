@@ -187,8 +187,8 @@ const LESSONS = [
        explain:'require 進貨回來的，就是 utils 擺在窗口的那個物件 <code>{ makeTodo }</code>。所以能 <code>utils.makeTodo</code> 用它（物件.屬性，第 1 課學的）。'},
       {code:'require("./utils")   // 有 ./ → 你自己寫的檔案（同資料夾的 utils.js）\nrequire("uuid")      // 沒 ./ → npm 裝的套件\nrequire("http")      // 沒 ./ → Node 內建模組',
        explain:'<b>有沒有 <code>./</code>，決定 Node 去哪找：</b>有 <code>./</code> = 找你自己的檔案；沒有 <code>./</code> = 找內建模組或 npm 套件。這點最常搞混，記住就好。'},
-      {code:'const { makeTodo } = require("./utils");\n\nmakeTodo("買牛奶");   // 之後直接用，不用寫 utils.',
-       explain:'與其每次寫 <code>utils.makeTodo</code>，不如<b>開箱一次</b>直接拿 makeTodo —— 這就是這課的解構。讀法：「從 utils 這個箱子，把 makeTodo 拿出來」。'},
+      {code:'// member 是物件 → 解構拿出「資料」\nconst member = { name: "小華" };\nconst { name } = member;            // name 是 "小華"，直接用\n\n// require("./utils") 拿回的也是物件 → 同一招\nconst { makeTodo } = require("./utils");\nmakeTodo("買牛奶");                  // 但這格裝「函式」，要按下去用',
+       explain:'<b>這兩組是同一招</b>，都是「從物件拿幾格出來」—— 你會上面 member 那行，就等於會下面這行（因為 require 拿回的就是個物件）。<b>唯一差別：</b>member 的格子裝<b>資料</b>（name 拿出來直接用）；utils 的格子裝<b>函式</b>（makeTodo 拿出來要「呼叫、按下去」，像 <code>makeTodo("買牛奶")</code>）。讀法不變：「從這個物件，把 makeTodo 拿出來」。'},
       {code:'const { v4: uuidv4 } = require("uuid");',
        explain:'冒號 = 開箱時「<b>貼張新標籤</b>」：拿出 v4，改叫 uuidv4，之後寫 <code>uuidv4()</code>。'}
     ],
