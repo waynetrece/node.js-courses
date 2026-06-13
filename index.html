@@ -181,14 +181,18 @@ const LESSONS = [
        note:'一個是裝箱、一個是拆箱，同一件事的正反兩面。你已經會裝箱了，拆箱只是反過來。'}
     ],
     key:'💡 看到 <code>const { X } = Y</code>，照這句讀：「<b>從 Y 裡面，把那格叫 X 的，拿出來變成獨立的 X</b>」。記這句讀法，比背規則好用。',
-    p2intro:'看到 require 前面有一對 { }，就是在「<b>開模組的箱子</b>」：',
+    p2intro:'先搞懂 <code>require</code> 本身：<b>require = 進貨</b>，把別的檔案或套件「拿進來用」。它跟 <code>module.exports</code>（出餐窗口）剛好是一對 —— 一邊擺出來、一邊拿進去：',
     p2:[
-      {code:'const { sayHello, add } = require("./utils");\n\nsayHello("小華");   // 之後直接用，不用寫 模組.sayHello',
-       explain:'<code>require("./utils")</code> 回傳一個箱子 <code>{ sayHello, add }</code>。解構 = 開箱，把 sayHello 拿出來直接用。讀法：「從 utils 這個箱子，把 sayHello 拿出來」。'},
+      {code:'// utils.js —— 把功能擺上「出餐窗口」\nmodule.exports = { makeTodo };\n\n// app.js —— 用 require「進貨」拿回來\nconst utils = require("./utils");\nutils.makeTodo("買牛奶");   // 用 .makeTodo 拿出功能',
+       explain:'require 進貨回來的，就是 utils 擺在窗口的那個物件 <code>{ makeTodo }</code>。所以能 <code>utils.makeTodo</code> 用它（物件.屬性，第 1 課學的）。'},
+      {code:'require("./utils")   // 有 ./ → 你自己寫的檔案（同資料夾的 utils.js）\nrequire("uuid")      // 沒 ./ → npm 裝的套件\nrequire("http")      // 沒 ./ → Node 內建模組',
+       explain:'<b>有沒有 <code>./</code>，決定 Node 去哪找：</b>有 <code>./</code> = 找你自己的檔案；沒有 <code>./</code> = 找內建模組或 npm 套件。這點最常搞混，記住就好。'},
+      {code:'const { makeTodo } = require("./utils");\n\nmakeTodo("買牛奶");   // 之後直接用，不用寫 utils.',
+       explain:'與其每次寫 <code>utils.makeTodo</code>，不如<b>開箱一次</b>直接拿 makeTodo —— 這就是這課的解構。讀法：「從 utils 這個箱子，把 makeTodo 拿出來」。'},
       {code:'const { v4: uuidv4 } = require("uuid");',
-       explain:'冒號 = 開箱時「<b>貼張新標籤</b>」：拿出 v4，但嫌名字爛，改叫 uuidv4，之後寫 <code>uuidv4()</code>。'}
+       explain:'冒號 = 開箱時「<b>貼張新標籤</b>」：拿出 v4，改叫 uuidv4，之後寫 <code>uuidv4()</code>。'}
     ],
-    p2end:'🔑 用「開行李箱」想：物件是箱子，解構就是<b>開箱一次、把要的東西拿出來</b>。讀法永遠是「從 Y 把 X 拿出來」，遇到任何解構都套這句，不用背。',
+    p2end:'🔑 <code>require</code> = 進貨（把別的檔案／套件拿進來）；有 <code>./</code> 找自己的檔案、沒有就找套件或內建。前面加 <code>{ }</code> 就是順手「開箱」解構，讀法永遠是「從 Y 把 X 拿出來」。',
     practice:[
       {ask:'<code>const box = { socks: "襪子" }; const { shoes } = box;</code>，<code>shoes</code> 會是？',
        opts:[['<code>undefined</code>（箱子裡沒有 shoes 那格）',true],['<code>"襪子"</code>',false],['報錯',false]],
