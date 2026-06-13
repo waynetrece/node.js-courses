@@ -55,6 +55,9 @@
   .ttl-row h2{font-size:20px; font-weight:700; margin:0;}
   .maps{margin:14px 0 0; font-size:13.5px; color:var(--muted);}
   .maps code{font-size:.92em;}
+  .obs{margin:10px 0 0; font-size:13px; color:var(--muted); background:var(--accent-soft);
+    border-radius:8px; padding:8px 12px;}
+  .obs b{color:var(--accent-ink);}
   .partlabel{font-size:15px; font-weight:700; color:var(--accent); margin:30px 0 12px;
     padding-top:18px; border-top:2px solid var(--line);}
   .concept{font-size:15.5px; line-height:1.85;}
@@ -337,6 +340,16 @@ const LESSONS = [
   }
 ];
 
+const OBS = [
+  'JS：08-物件教學、17-物件進階教學（速查表03-陣列與物件）　｜　Node：04-Todolist-RESTful-API-kata（req/res/data 的應用）',
+  'JS：08-物件教學（速查表03-陣列與物件）　｜　Node：02-Node模組與內建模組（require 解構）',
+  'JS：19-函式function（速查表04-函式與作用域）　｜　Node：02、04（createServer 的 callback）',
+  'JS：12-比較與邏輯運算子、13-流程判斷-if-else if-else（速查表02-邏輯判斷與if）',
+  'JS：05-字串型別、18-陣列與物件整合運用 › 03-JSON格式介紹',
+  'JS：07-陣列教學、16-陣列進階教學（速查表05-陣列方法與套路、觀念複習30-陣列5招總表）',
+  'JS：22-AJAX網路請求、23-AJAX-axios套件教學（速查表06-AJAX與非同步、打卡任務Day24）　｜　Node：01-Node.js基礎/直播第1堂'
+];
+
 const KEY = "hex-js2node-v1";
 let state = load();
 let active = state.active ?? 0;
@@ -369,6 +382,7 @@ function renderPanel(){
   const s = LESSONS[active];
   let h = '<div class="ttl-row"><span class="badge">'+(active+1)+'</span><h2>第 '+(active+1)+' 課：'+s.js+'</h2></div>';
   h += '<p class="maps">'+(s.mapsText || ('這個觀念之後在 Node 變成 → '+s.maps))+'</p>';
+  if(OBS[active]){ h += '<p class="obs"><b>📁 對應 Obsidian 單元</b> — '+OBS[active]+'</p>'; }
 
   h += '<div class="partlabel">'+(s.part1label || 'PART 1 ── 先把 JS 觀念弄懂')+'</div>';
   h += '<div class="concept">'+s.concept+'</div>';
