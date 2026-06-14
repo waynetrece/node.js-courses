@@ -376,6 +376,16 @@ const LESSONS = [
        note:'順序會「跳」，正是因為遇到 await 先去做後面的事了。'}
     ],
     key:'💡 看到 <code>async / await</code>，就是在處理「要等一下」的事，而且它不會卡住整支程式。',
+    deepLabel:'網路請求 / fetch / axios（非同步最常見的用途）',
+    deep:[
+      {label:'① 什麼是網路請求？為什麼一定非同步', code:'// 網頁跟伺服器「要資料 / 送資料」= 網路請求\n// 像叫外送：發出請求後不站在門口乾等，\n// 繼續做別的，資料回來再處理 → 這就是非同步\n\nconst res = await axios.get("https://api.xxx.com/todos");\n//          ↑ await：因為要「等伺服器回來」',
+       note:'前端要顯示即時資料（貼文、天氣、商品）都靠網路請求去跟後端要。因為要等網路，所以一定用 async/await，不然網頁會卡死。'},
+      {label:'② 兩種發請求的工具：fetch（內建）vs axios（套件）', code:'// fetch（瀏覽器內建，不用裝）\nconst res  = await fetch(url);\nconst data = await res.json();   // 要自己寫 res.json() 轉成物件\n\n// axios（npm install axios，更好用）\nconst res = await axios.get(url);\nconsole.log(res.data);           // res.data 已經是物件，免轉',
+       note:'axios.get(url) 拿資料、axios.post(url, data) 送資料；回來的資料在 res.data。fetch 是「自己煮」，axios 是「叫外送平台」——都吃得到飯，axios 幫你處理掉雜事。'},
+      {label:'③ ⭐ 何時要自己寫 parse？看「用什麼工具」', code:'// 後端自己接 body / 讀檔 → 字串 → 要寫 JSON.parse\nconst data = JSON.parse(body);\n\n// fetch → 寫 res.json()（它幫你 parse）\nconst data = await res.json();\n\n// axios → 不用寫，res.data 已是物件\nres.data',
+       note:'重點是「用哪個工具」不是「有沒有 res」——fetch 也有 res，但還是要寫 res.json()。伺服器永遠送 JSON 字串，差別只在誰幫你轉。對已是物件的東西（axios res.data）再 parse 會報錯。'}
+    ],
+    deepKey:'💡 網路請求 = 跟伺服器要 / 送資料，因為要等所以用 <code>await</code>。轉成物件：後端接 body 要 <code>JSON.parse</code>、fetch 寫 <code>res.json()</code>、axios 直接 <code>res.data</code>。',
     p2intro:'直播第一堂的讀檔、之後的 Express、資料庫、登入驗證，全是非同步：',
     p2:[
       {code:'const fs = require("fs/promises");\n\nconst text = await fs.readFile("members.json", "utf-8");\nconst members = JSON.parse(text);',
@@ -388,7 +398,10 @@ const LESSONS = [
        ans:'對。沒有 async 包著，await 會直接語法錯誤。'},
       {ask:'為什麼後端要用非同步？',
        opts:[['不讓「等待」卡住整台伺服器、害其他人排隊',true],['因為比較快打字',false]],
-       ans:'對。單線程不能卡，等待的事要讓出去，先服務別人。'}
+       ans:'對。單線程不能卡，等待的事要讓出去，先服務別人。'},
+      {ask:'用 <code>axios.get(url)</code> 拿資料，要不要自己寫 <code>JSON.parse</code>？',
+       opts:[['不用，axios 已轉好，直接用 <code>res.data</code>',true],['要，每次都要先 parse',false]],
+       ans:'對。axios 自動把 JSON 轉成物件了；fetch 才要寫 res.json()、後端自己接 body 才要 JSON.parse。'}
     ]
   }
 ];
