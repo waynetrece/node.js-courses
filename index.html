@@ -152,9 +152,13 @@ const LESSONS = [
       {code:'// utils.js —— 用 module.exports 公開功能\nfunction makeTodo(title) {\n  return { title: title, done: false };\n}\nmodule.exports = { makeTodo };',
        explain:'這支檔案把 makeTodo 擺上「<b>出餐窗口</b>」（④ module.exports），別的檔案才拿得到。'},
       {code:'// app.js —— 主程式\nconst http = require("http");\nconst { makeTodo } = require("./utils");   // 把 makeTodo 拿進來\n\nconst todos = [];\n\nconst server = http.createServer((req, res) => {\n  if (req.url === "/todos" && req.method === "GET") {\n    res.writeHead(200, { "Content-Type": "application/json" });\n    res.end(JSON.stringify(todos));          // 物件 → 字串，回傳\n  } else if (req.url === "/todos" && req.method === "POST") {\n    let body = "";\n    req.on("data", (chunk) => { body += chunk; });   // 一段段收\n    req.on("end", () => {\n      const data = JSON.parse(body);         // 字串 → 物件\n      todos.push(makeTodo(data.title));\n      res.writeHead(200, { "Content-Type": "application/json" });\n      res.end(JSON.stringify(todos));\n    });\n  } else {\n    res.writeHead(404);\n    res.end("找不到這個網址");\n  }\n});\n\nserver.listen(3000);',
-       explain:'整家店全在這：① 看客人的點餐單 <code>req</code>（url/method/on）② 把飲料交還 <code>res</code>（writeHead/end）③ 拆開密封訂單 <code>data</code>（JSON.parse）④ 從窗口拿 makeTodo（require 進來用）。<b>這就是整個 Todolist 影片在做的事。</b>'}
+       explain:'整家店全在這：① 看客人的點餐單 <code>req</code>（url/method/on）② 把飲料交還 <code>res</code>（writeHead/end）③ 拆開密封訂單 <code>data</code>（JSON.parse）④ 從窗口拿 makeTodo（require 進來用）。<b>這就是整個 Todolist 影片在做的事。</b>'},
+      {code:'// 番外：真實 Todolist 伺服器回應前還會多一段 headers\nconst headers = {\n  "Access-Control-Allow-Origin": "*",   // 允許任何網域來要（* = 全部）\n  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",\n  "Content-Type": "application/json"\n};\nres.writeHead(200, headers);',
+       explain:'<b>CORS（瀏覽器的安全鎖）：</b>瀏覽器預設不准網頁跟「別的網域」要資料（防壞人）。那堆 <code>Access-Control-Allow-*</code> headers = 後端跟瀏覽器說「<b>我允許你</b>」。'},
+      {code:'} else if (req.method === "OPTIONS") {\n  res.writeHead(200, headers);\n  res.end();   // 回 200 說「可以送」\n}',
+       explain:'<b>OPTIONS（預檢請求）：</b>瀏覽器送 POST/DELETE 前，會先偷偷送一個 <code>OPTIONS</code> 問「我可以送嗎？」→ 後端要回 200 + headers 說「可以」。<b>一句話：CORS 是瀏覽器的安全鎖，headers + OPTIONS 是後端開門讓它進，不是 Node 壞掉。</b>'}
     ],
-    p2end:'🔑 <code>req</code>/<code>res</code> 是 Node 自動給你的物件（看需求、回應）；<code>data</code> 是你自己建的物件；<code>module.exports</code> 是把功能拆到別檔案公開；<code>createServer</code> 把它們組成一台伺服器。會物件，這些就都讀得懂了。',
+    p2end:'🔑 <code>req</code>/<code>res</code> 是 Node 自動給你的物件（看需求、回應）；<code>data</code> 是你自己建的物件；<code>module.exports</code> 是把功能拆到別檔案公開；<code>createServer</code> 把它們組成一台伺服器。（真實伺服器會多 CORS headers + OPTIONS 預檢 —— 那是瀏覽器的安全規矩。）',
     practice:[
       {ask:'有 <code>const todo = { title: "寫作業", done: false };</code>，我要拿出 <code>"寫作業"</code>，要怎麼寫？',
        opts:[['<code>todo.title</code>',true],['<code>todo["寫作業"]</code>',false],['<code>title.todo</code>',false]],
