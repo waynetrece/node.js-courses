@@ -190,16 +190,23 @@ const LESSONS = [
       {code:'// member 是物件 → 解構拿出「資料」\nconst member = { name: "小華" };\nconst { name } = member;            // name 是 "小華"，直接用\n\n// require("./utils") 拿回的也是物件 → 同一招\nconst { makeTodo } = require("./utils");\nmakeTodo("買牛奶");                  // 但這格裝「函式」，要按下去用',
        explain:'<b>這兩組是同一招</b>，都是「從物件拿幾格出來」—— 你會上面 member 那行，就等於會下面這行（因為 require 拿回的就是個物件）。<b>唯一差別：</b>member 的格子裝<b>資料</b>（name 拿出來直接用）；utils 的格子裝<b>函式</b>（makeTodo 拿出來要「呼叫、按下去」，像 <code>makeTodo("買牛奶")</code>）。讀法不變：「從這個物件，把 makeTodo 拿出來」。'},
       {code:'const { v4: uuidv4 } = require("uuid");',
-       explain:'冒號 = 開箱時「<b>貼張新標籤</b>」：拿出 v4，改叫 uuidv4，之後寫 <code>uuidv4()</code>。'}
+       explain:'冒號 = 開箱時「<b>貼張新標籤</b>」：拿出 v4，改叫 uuidv4，之後寫 <code>uuidv4()</code>。'},
+      {code:'const x = require("./fileManager.js");\n\n// Node 看到這行會做 4 件事：\n// ① 找檔案：去同資料夾找 fileManager.js\n// ② 執行它：把整個檔案從上到下跑一遍\n// ③ 看它的 module.exports 變成什麼\n// ④ 把那個 module.exports 交還 → 就是 x',
+       explain:'<b>require 到底怎麼運作？核心：</b><code>x</code> 就等於 fileManager.js 裡的 <code>module.exports</code>。require 不只是「看一眼功能」，是「<b>跑完整個檔案 + 把它的出貨箱拿回來</b>」。'},
+      {code:'// 每個 .js 檔，Node 都自動給一個 module.exports（出貨箱），\n// 一開始是空的 {}。\n\n// fileManager.js（要被別人用）→ 把東西裝進出貨箱\nmodule.exports = { saveData, loadData };\n\n// app.js（主程式，去 require 別人）→ 不出貨，\n//   通常不用寫 module.exports（箱子一直空的也沒關係）',
+       explain:'每個檔案是<b>獨立的房間</b>，裡面的變數別的房間看不到 —— 除非放進出貨箱。<code>require</code> 是<b>橋</b>，把出貨箱搬回來。誰被 require → 誰要寫 <code>module.exports</code>；該寫卻忘了 → 別人拿到空 <code>{}</code>，一呼叫就報錯。'}
     ],
-    p2end:'🔑 <code>require</code> = 進貨（把別的檔案／套件拿進來）；有 <code>./</code> 找自己的檔案、沒有就找套件或內建。前面加 <code>{ }</code> 就是順手「開箱」解構，讀法永遠是「從 Y 把 X 拿出來」。',
+    p2end:'🔑 <code>require("./x")</code> = 「跑一遍 x 檔案、把它的 <code>module.exports</code> 拿回來」。有 <code>./</code> 找自己的檔案、沒有找套件／內建。每個檔案出生就有出貨箱（空 <code>{}</code>），只有「要被別人用」的檔案才裝東西進去。',
     practice:[
       {ask:'<code>const box = { socks: "襪子" }; const { shoes } = box;</code>，<code>shoes</code> 會是？',
        opts:[['<code>undefined</code>（箱子裡沒有 shoes 那格）',true],['<code>"襪子"</code>',false],['報錯',false]],
        ans:'對。大括號的名字要對應箱子裡真的有的那格；沒有 shoes 就拿到 undefined。答對代表你「懂」而不是「背」。'},
       {ask:'用讀法食譜讀 <code>const { sayHello } = require("./utils")</code>：',
        opts:[['從 utils 這個箱子，把 sayHello 拿出來用',true],['建立一個叫 sayHello 的新箱子',false]],
-       ans:'對。<code>const { X } = Y</code> 永遠讀成「從 Y 把 X 拿出來」。'}
+       ans:'對。<code>const { X } = Y</code> 永遠讀成「從 Y 把 X 拿出來」。'},
+      {ask:'主程式 <code>app.js</code>（它去 require 別人）需不需要自己寫 <code>module.exports</code>？',
+       opts:[['不用 —— 它是「進貨」的一方，不出貨給別人',true],['一定要寫，每個檔案都要',false]],
+       ans:'對。誰「被別人 require」才要寫 module.exports（出貨）；app.js 是去 require 別人，不出貨，所以不用寫。'}
     ]
   },
   {
