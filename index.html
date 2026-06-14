@@ -340,8 +340,8 @@ const LESSONS = [
     key:'💡 <code>push</code> 加資料、<code>filter</code> 篩資料、<code>map</code> 改造每一筆。',
     p2intro:'後端天天用陣列裝資料、處理資料：',
     p2:[
-      {code:'todos.push({ title: data.title, id: uuidv4() });',
-       explain:'把一筆新的 todo <b>物件</b>，加到 todos 這個清單的尾巴。（陣列裡裝物件 = 一疊卡）'},
+      {code:'const todos = [];   // 空清單，用 [] 建立（後端、前端都一樣）\n\n// 來一筆，就放一張「卡」（物件）進清單\ntodos.push({ title: "買牛奶", id: uuidv4() });\ntodos.push({ title: "寫作業", id: uuidv4() });\n\n// todos 現在是「一疊卡」：\n// [\n//   { title: "買牛奶", id: "..." },\n//   { title: "寫作業", id: "..." }\n// ]',
+       explain:'⚠️ 注意：<code>todos</code> 用 <code>[]</code> 建立 —— <b>後端陣列照樣用 []，沒有「後端不用 []」這回事</b>。<code>push</code> 進去的 <code>{ ... }</code> 是<b>物件</b>（一筆 todo），不是陣列。<b>[] 是清單、{} 是一張卡，陣列裡裝物件 = 一疊卡。</b>'},
       {code:'const vips = members.filter((m) => m.level === "VIP");\nconst names = members.map((m) => m.name);',
        explain:'直播第一堂整理會員就用到：<code>filter</code> 篩出 VIP、<code>map</code> 取出每個人的名字。'}
     ],
