@@ -396,6 +396,27 @@ const OBS = [
   'JS：22-AJAX網路請求、23-AJAX-axios套件教學（速查表06-AJAX與非同步、打卡任務Day24）　｜　Node：01-Node.js基礎/直播第1堂'
 ];
 
+const TASKS = [
+  {
+    day:"Day 1", title:"模組化概念、fs/promises",
+    uses:'用到 → <b>第 2 課</b> module / require ｜ <b>第 7 課</b> async / await + fs',
+    intro:'把功能拆到 <code>fileManager.js</code>，再用 <code>app.js</code> 引入：先寫檔、寫成功後讀檔印出內容。',
+    reqs:[
+      '<code>fileManager.js</code>：引入 <code>"fs/promises"</code>，寫 <code>saveData(fileName, content)</code> 和 <code>loadData(fileName)</code>，用 <code>module.exports</code> 匯出兩個函式。',
+      '<code>app.js</code>：用 <code>require("./fileManager.js")</code> 引入，先寫入 <code>user.txt</code> 內容 <code>"Hello Node.js!"</code>，寫成功後讀取並印出。'
+    ],
+    hints:[
+      'fs/promises 每個操作前要 await，且 await 只能寫在 async 函式裡。',
+      'fs.writeFile 覆蓋寫入；fs.readFile 要加 "utf-8"。',
+      '「先寫成功才讀」靠 await 一行一行照順序等。'
+    ],
+    solution:[
+      {label:'fileManager.js', code:'const fs = require("fs/promises");\n\nasync function saveData(fileName, content) {\n  try {\n    await fs.writeFile(fileName, content);\n    console.log("寫入成功：" + fileName);\n  } catch (err) {\n    console.log("寫入失敗：", err);\n  }\n}\n\nasync function loadData(fileName) {\n  try {\n    const data = await fs.readFile(fileName, "utf-8");\n    return data;\n  } catch (err) {\n    console.log("讀取失敗：", err);\n  }\n}\n\nmodule.exports = { saveData, loadData };'},
+      {label:'app.js', code:'const { saveData, loadData } = require("./fileManager.js");\n\nasync function main() {\n  await saveData("user.txt", "Hello Node.js!");   // ① 先寫入（await 等它寫完）\n  const content = await loadData("user.txt");      // ② 寫完才讀\n  console.log("檔案內容：", content);              // ③ Hello Node.js!\n}\n\nmain();'}
+    ]
+  }
+];
+
 const KEY = "hex-js2node-v1";
 let state = load();
 let active = state.active ?? 0;
@@ -416,6 +437,11 @@ function renderTabs(){
     b.onclick = ()=>{ active=i; state.active=i; save(); render(); };
     tabsEl.appendChild(b);
   });
+  const tb = document.createElement("button");
+  tb.className = "tab" + (active==='tasks'?" active":"");
+  tb.innerHTML = '<span>🏅 每日任務</span>';
+  tb.onclick = ()=>{ active='tasks'; state.active='tasks'; save(); render(); };
+  tabsEl.appendChild(tb);
 }
 
 function codeBlock(b){
@@ -424,7 +450,32 @@ function codeBlock(b){
   return h;
 }
 
+function renderTasks(){
+  const td = state.taskDone || (state.taskDone = {});
+  let h = '<div class="ttl-row"><span class="badge">🏅</span><h2>每日任務（打卡）</h2></div>';
+  h += '<p class="maps">六角的每日任務，邊做邊用前面學的觀念。先自己試，卡住再看解答。</p>';
+  TASKS.forEach((t, ti)=>{
+    h += '<div class="partlabel">'+t.day+' — '+t.title+'</div>';
+    h += '<p class="obs">'+t.uses+'</p>';
+    h += '<p class="p2intro">'+t.intro+'</p>';
+    h += '<div class="blklabel">題目要求</div><ul style="margin:0;padding-left:20px">'+t.reqs.map(r=>'<li style="margin:8px 0;font-size:15px;line-height:1.6">'+r+'</li>').join('')+'</ul>';
+    h += '<div class="blklabel" style="margin-top:16px">提示</div><ul style="margin:0;padding-left:20px">'+t.hints.map(r=>'<li style="margin:6px 0;font-size:14px;color:var(--muted)">'+r+'</li>').join('')+'</ul>';
+    h += '<div style="margin:16px 0"><button class="ghost" data-sol="'+ti+'">看參考解答</button></div>';
+    h += '<div id="sol-'+ti+'" style="display:none">'+t.solution.map(codeBlock).join('')+'</div>';
+    const done = !!td[ti];
+    h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" data-task="'+ti+'">'+(done?'✓ 已打卡（點可取消）':'我做完了（打卡）')+'</button></div>';
+  });
+  panelEl.innerHTML = h;
+  panelEl.querySelectorAll('[data-sol]').forEach(btn=>{
+    btn.onclick = ()=>{ const d=document.getElementById('sol-'+btn.dataset.sol); const show=d.style.display==='none'; d.style.display=show?'block':'none'; btn.textContent=show?'收起解答':'看參考解答'; };
+  });
+  panelEl.querySelectorAll('[data-task]').forEach(btn=>{
+    btn.onclick = ()=>{ td[btn.dataset.task]=!td[btn.dataset.task]; save(); render(); };
+  });
+}
+
 function renderPanel(){
+  if(active === 'tasks'){ renderTasks(); return; }
   const s = LESSONS[active];
   let h = '<div class="ttl-row"><span class="badge">'+(active+1)+'</span><h2>第 '+(active+1)+' 課：'+s.js+'</h2></div>';
   h += '<p class="maps">'+(s.mapsText || ('這個觀念之後在 Node 變成 → '+s.maps))+'</p>';
