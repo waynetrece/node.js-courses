@@ -389,7 +389,9 @@ const LESSONS = [
     p2intro:'直播第一堂的讀檔、之後的 Express、資料庫、登入驗證，全是非同步：',
     p2:[
       {code:'const fs = require("fs/promises");\n\nconst text = await fs.readFile("members.json", "utf-8");\nconst members = JSON.parse(text);',
-       explain:'讀檔要等硬碟，所以用 <code>await</code>。讀完是字串，再用第 5 課的 <code>JSON.parse</code> 變物件 —— 你看，觀念全串起來了。'}
+       explain:'讀檔要等硬碟，所以用 <code>await</code>。讀完是字串，再用第 5 課的 <code>JSON.parse</code> 變物件 —— 你看，觀念全串起來了。'},
+      {code:'// fs = 管檔案的工具箱（讀寫刪檔、建資料夾），Node 內建\n// fs 有三種「型號」：\n//   fs.readFileSync      → 同步，會卡住整支程式（線上禁用）\n//   fs.readFile(.., cb)  → callback 版，不卡但寫起來繞\n//   fs/promises          → 不卡 + 可以 await，最乾淨 ✅\n\nconst fs = require("fs/promises");   // 選「promises 型號」',
+       explain:'<b>那 <code>fs/promises</code> 是什麼？</b>就是 fs 的「<b>可以 await 的版本</b>」。功能完全一樣（readFile / writeFile / mkdir / rename…），只是換成配 async/await 的乾淨寫法，<b>沒有特殊新功能</b>。內建、免 npm install；<code>/promises</code> = 跟 Node 要「promise 型號」。'}
     ],
     p2end:'🔑 這關通了，你就有資格往 Express、資料庫前進 —— 因為它們全都是非同步。',
     practice:[
