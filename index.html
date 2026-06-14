@@ -288,17 +288,25 @@ const LESSONS = [
   {
     js:"字串 ↔ JSON 互轉", maps:'<code>JSON.parse</code> · <code>JSON.stringify</code>',
     concept:
-      '這課解決你卡最久的 POST。先記一個畫面：<br><br>'+
-      '・<b>物件</b>是「<b>活的、能直接用</b>的資料」 —— 能 <code>.title</code> 拿值。<br>'+
-      '・<b>JSON 字串</b>是「<b>打包好、能寄出去</b>的快遞箱」 —— 就是一長串文字。<br><br>'+
-      '網路上只能寄「文字」，不能直接寄「活物件」。所以兩邊要互相轉換：<br><br>'+
-      '・<code>JSON.stringify(物件)</code> → 變字串（<b>打包</b>，準備寄出）<br>'+
-      '・<code>JSON.parse(字串)</code> → 變回物件（<b>拆箱</b>，才能用）',
+      '這課解決你卡最久的 POST。先記一個<b>關鍵事實</b>：<br><br>'+
+      '<b>JS 物件是「活的」，只活在程式記憶體裡 —— 沒辦法直接「寄出去」或「存起來」。</b>因為網路、檔案這些通道<b>只認得「文字」</b>，不認得活物件。<br><br>'+
+      '用<b>家具</b>想：物件 = 組好的家具（能用，但<b>搬不出門</b>）；要寄給別人，得先<b>拆成平板紙箱</b>（文字）= <code>JSON.stringify</code>；對方收到再<b>組回家具</b>（物件）= <code>JSON.parse</code>。<br><br>'+
+      '・<code>JSON.stringify(物件)</code> → 變字串（打包寄出）。看名字就懂：<b>string ＋ ify ＝ 字串化</b>。<br>'+
+      '・<code>JSON.parse(字串)</code> → 變回物件（拆箱才能用）。<br><br>'+
+      '（<code>JSON</code> 是 JS 內建的「工具箱物件」，stringify、parse 是它的兩個工具 —— 跟第 1 課「物件.屬性」同一個寫法。為什麼用 JSON？因為大家講好用同一種格式，誰都看得懂。）',
     blocks:[
       {label:'打包與拆箱', code:'const obj = { title: "買牛奶" };\n\nconst text = JSON.stringify(obj);   // \'{"title":"買牛奶"}\'  ← 字串\nconst back = JSON.parse(text);      // { title: "買牛奶" }   ← 物件\n\nconsole.log(back.title);            // 買牛奶',
        note:'物件可以 .title；JSON 字串不行（它只是一串文字，要先 parse 拆箱）。'}
     ],
-    key:'💡 出去先 <code>stringify</code>（打包成字串），進來先 <code>parse</code>（拆箱成物件）。',
+    key:'💡 出去先 <code>stringify</code>（打包／字串化），進來先 <code>parse</code>（拆箱）。stringify 名字 = 字串化。',
+    deepLabel:'怎麼判斷：我該用 stringify 還是 parse？',
+    deep:[
+      {label:'最快：看資料是「進」還是「出」', code:'// 往外送 / 存起來（出）→ stringify（打包）\nres.end(JSON.stringify(todos));\nfs.writeFile("data.json", JSON.stringify(todos));\n\n// 收進來 / 讀出來（進）→ parse（拆箱）\nconst data  = JSON.parse(body);\nconst todos = JSON.parse(fileText);',
+       note:'出去 = 打包 = stringify；進來 = 拆箱 = parse。不確定時問自己：「我手上是物件還是字串？要變成哪個？」物件要送出 → stringify；字串要拿來用 → parse。'},
+      {label:'卡住時的「症狀判斷」', code:'// 症狀 A：手上是一串 {"title":"..."} 文字，.title 卻 undefined\n//   → 它其實是字串，忘了 parse 拆箱\n\n// 症狀 B：想把物件傳出去，對方收到 [object Object]\n//   → 忘了 stringify 打包',
+       note:'看到 undefined（讀不到屬性）多半是「該 parse 沒 parse」；看到 [object Object] 多半是「該 stringify 沒 stringify」。'}
+    ],
+    deepKey:'💡 一句話：要「送出去／存」就 stringify；「收進來／讀」要用就 parse。',
     p2intro:'這就是你 POST 那段的核心：',
     p2:[
       {code:'req.on("end", () => {\n  const data = JSON.parse(body);   // body 是字串 → 拆箱成物件\n  console.log(data.title);        // 這樣才讀得到\n});',
@@ -313,7 +321,10 @@ const LESSONS = [
        ans:'對。stringify = 打包成字串，準備寄出。'},
       {ask:'POST 進來的 <code>body</code>，為什麼不能直接 <code>body.title</code>？',
        opts:[['它是字串，要先 <code>JSON.parse</code> 變物件',true],['title 還沒設定',false]],
-       ans:'對。字串不能 .title，要先拆箱成物件。'}
+       ans:'對。字串不能 .title，要先拆箱成物件。'},
+      {ask:'要把 <code>todos</code> 物件「回傳給前端」，<code>res.end(?)</code> 裡該放哪個？',
+       opts:[['<code>JSON.stringify(todos)</code>（出去 → 打包）',true],['<code>JSON.parse(todos)</code>（拆箱）',false]],
+       ans:'對。資料「往外送」= 出去 = stringify 打包成字串。'}
     ]
   },
   {
