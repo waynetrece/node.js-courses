@@ -443,6 +443,30 @@ const TASKS = [
   }
 ];
 
+const API_STAGES = [
+  {title:'① 查全部（GET /todos）— 最簡單', what:'前端問「給我全部待辦」→ 把整個清單回傳。',
+   code:'if (req.url === "/todos" && req.method === "GET") {\n  res.writeHead(200, headers);\n  res.end(JSON.stringify({ status: "success", data: todos }));\n}',
+   note:'直接把整個 todos 打包回傳。你已經會了。'},
+  {title:'② 增一筆（POST /todos）', what:'送內容 → 拆箱、檢查、做卡、貼牆。',
+   code:'} else if (req.url === "/todos" && req.method === "POST") {\n  req.on("end", () => {\n    try {\n      const title = JSON.parse(body).title;     // 拆箱拿內容\n      if (title) {\n        const todo = { title, id: uuidv4() };    // 做一張卡\n        todos.push(todo);                        // 貼到牆上\n        res.writeHead(200, headers);\n        res.end(JSON.stringify({ status: "success", data: todos }));\n      } else {\n        res.writeHead(400, headers);\n        res.end(JSON.stringify({ status: "false", message: "欄位未填寫正確" }));\n      }\n    } catch (error) {\n      res.writeHead(400, headers);\n      res.end(JSON.stringify({ status: "false", message: "欄位未填寫正確" }));\n    }\n  });\n}',
+   note:'這段你已經自己寫出來了！(parse → 檢查 → push)'},
+  {title:'③ 刪全部（DELETE /todos）', what:'把整面牆清空。',
+   code:'} else if (req.url === "/todos" && req.method === "DELETE") {\n  todos.length = 0;     // 把清單清空（長度設 0）\n  res.writeHead(200, headers);\n  res.end(JSON.stringify({ status: "success", data: todos }));\n}',
+   note:'todos.length = 0 = 清空。因為 todos 是 const 不能 todos = []，所以用 length = 0。'},
+  {title:'★ 先備知識：刪/改「單筆」要先「找到那一筆」', what:'刪一筆/改一筆的網址帶 id（/todos/abc）。先學 4 個工具：',
+   code:'req.url.startsWith("/todos/")        // 網址開頭是不是 /todos/\nreq.url.split("/")                   // "/todos/abc" → ["", "todos", "abc"]\n                                     //   第 [2] 個就是 id\ntodos.findIndex(t => t.id === id)    // 找這筆在第幾個（找不到回 -1）\ntodos.splice(位置, 1)                // 從清單刪掉指定位置那 1 筆',
+   note:'流程：切出 id → findIndex 找位置 → 找到就 splice 刪/改、找不到回 404。'},
+  {title:'④ 刪一筆（DELETE /todos/:id）', what:'從網址切出 id，找到那筆，刪掉。',
+   code:'} else if (req.url.startsWith("/todos/") && req.method === "DELETE") {\n  const id = req.url.split("/")[2];                       // ① 切出 id\n  const index = todos.findIndex(todo => todo.id === id);  // ② 找位置\n  if (index !== -1) {                                     // ③ 找到了\n    todos.splice(index, 1);                               //    刪掉那筆\n    res.writeHead(200, headers);\n    res.end(JSON.stringify({ status: "success", data: todos }));\n  } else {\n    res.writeHead(404, headers);\n    res.end(JSON.stringify({ status: "false", message: "找不到這筆" }));\n  }\n}',
+   note:'找到（index 不是 -1）才刪；找不到回 404。'},
+  {title:'⑤ 改一筆（PATCH /todos/:id）', what:'切出 id，找到那筆，改掉 title。',
+   code:'} else if (req.url.startsWith("/todos/") && req.method === "PATCH") {\n  req.on("end", () => {\n    const id = req.url.split("/")[2];\n    const newTitle = JSON.parse(body).title;\n    const index = todos.findIndex(todo => todo.id === id);\n    if (index !== -1) {\n      todos[index].title = newTitle;   // 改掉那筆的 title\n      res.writeHead(200, headers);\n      res.end(JSON.stringify({ status: "success", data: todos }));\n    } else {\n      res.writeHead(404, headers);\n      res.end(JSON.stringify({ status: "false", message: "找不到這筆" }));\n    }\n  });\n}',
+   note:'跟刪一筆同套路，只是最後是「改 title」而不是「splice 刪」。'},
+  {title:'全部路由地圖', what:'整台 Todolist API 的所有功能：',
+   code:'GET    /todos        → 查全部\nPOST   /todos        → 增一筆\nDELETE /todos        → 刪全部\nDELETE /todos/:id    → 刪一筆\nPATCH  /todos/:id    → 改一筆\nOPTIONS              → CORS 預檢，回 200\n其他                  → 404',
+   note:'共同套路：帶 id 的操作（刪一筆、改一筆）都是「切出 id → findIndex 找位置 → 找到動手、找不到 404」。'}
+];
+
 const KEY = "hex-js2node-v1";
 let state = load();
 let active = state.active ?? 0;
@@ -468,12 +492,31 @@ function renderTabs(){
   tb.innerHTML = '<span>🏅 每日任務</span>';
   tb.onclick = ()=>{ active='tasks'; state.active='tasks'; save(); render(); };
   tabsEl.appendChild(tb);
+  const ab = document.createElement("button");
+  ab.className = "tab" + (active==='api'?" active":"");
+  ab.innerHTML = '<span>🛠️ Todolist API</span>';
+  ab.onclick = ()=>{ active='api'; state.active='api'; save(); render(); };
+  tabsEl.appendChild(ab);
 }
 
 function codeBlock(b){
   let h = '<div class="blklabel">'+b.label+'</div><pre><code>'+esc(b.code)+'</code></pre>';
   if(b.note) h += '<p class="codenote">'+b.note+'</p>';
   return h;
+}
+
+function renderApiCourse(){
+  let h = '<div class="ttl-row"><span class="badge">🛠️</span><h2>Todolist API：增刪改查（CRUD）</h2></div>';
+  h += '<p class="maps">整個 Todolist 系列在教的核心：讓前端對待辦「增刪改查」。用「便利貼牆」想 —— todos 是貼滿便利貼的牆。</p>';
+  h += '<p class="obs"><b>路由地圖</b> — GET /todos 查全部 ｜ POST /todos 增一筆 ｜ DELETE /todos 刪全部 ｜ DELETE /todos/:id 刪一筆 ｜ PATCH /todos/:id 改一筆</p>';
+  API_STAGES.forEach(s=>{
+    h += '<div class="partlabel">'+s.title+'</div>';
+    h += '<p class="p2intro">'+s.what+'</p>';
+    h += '<pre><code>'+esc(s.code)+'</code></pre>';
+    if(s.note){ h += '<p class="codenote">'+s.note+'</p>'; }
+  });
+  h += '<div class="key">💡 帶 id 的操作（刪一筆、改一筆）都是同一套路：<b>從網址切出 id → findIndex 找位置 → 找到就動手、找不到回 404</b>。</div>';
+  panelEl.innerHTML = h;
 }
 
 function renderTasks(){
@@ -502,6 +545,7 @@ function renderTasks(){
 
 function renderPanel(){
   if(active === 'tasks'){ renderTasks(); return; }
+  if(active === 'api'){ renderApiCourse(); return; }
   const s = LESSONS[active];
   let h = '<div class="ttl-row"><span class="badge">'+(active+1)+'</span><h2>第 '+(active+1)+' 課：'+s.js+'</h2></div>';
   h += '<p class="maps">'+(s.mapsText || ('這個觀念之後在 Node 變成 → '+s.maps))+'</p>';
