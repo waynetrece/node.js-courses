@@ -30,30 +30,41 @@
     -webkit-font-smoothing:antialiased;}
   code{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.9em;
     background:rgba(125,125,125,.14); padding:1px 5px; border-radius:5px;}
-  .wrap{max-width:880px; margin:0 auto; padding:32px 20px 90px;}
-  header h1{font-size:25px; font-weight:700; margin:0 0 4px;}
-  header p{margin:0; color:var(--muted); font-size:15px;}
-  .prog{margin:20px 0 8px; display:flex; align-items:center; gap:12px;}
-  .bar{flex:1; height:8px; background:var(--line); border-radius:99px; overflow:hidden;}
-  .bar > span{display:block; height:100%; background:var(--accent); width:0; transition:width .35s ease;}
-  .prog .count{font-size:13px; color:var(--muted); min-width:90px; text-align:right;}
-  nav{margin:18px 0 24px;}
-  .navgroup{margin-bottom:14px;}
-  .navlabel{font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.06em; margin:0 0 7px;}
-  .navtabs{display:flex; flex-wrap:wrap; gap:8px;}
-  .tab{display:flex; align-items:center; gap:8px; padding:9px 14px; border:1px solid var(--line);
-    background:var(--card); border-radius:99px; cursor:pointer; font-size:14px; color:var(--ink);
-    font-family:inherit; transition:.15s;}
-  .tab:hover{border-color:var(--accent);}
-  .tab.active{background:var(--accent); color:#fff; border-color:var(--accent);}
-  .tab .n{font-weight:700;}
-  .tab .dot{width:7px; height:7px; border-radius:50%; background:transparent; border:1.5px solid currentColor; opacity:.5;}
-  .tab.done .dot{background:#1d9e75; border-color:#1d9e75; opacity:1;}
-  .tab.active.done .dot{background:#fff; border-color:#fff;}
-  .panel{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:26px 28px; box-shadow:var(--shadow);}
-  .badge{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px;
-    border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); font-weight:700; font-size:16px; flex-shrink:0;}
+  .app{display:flex; min-height:100vh;}
+  .sidebar{width:290px; flex-shrink:0; background:var(--card); border-right:1px solid var(--line);
+    padding:30px 22px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .brand h1{font-size:20px; font-weight:700; margin:0 0 2px; letter-spacing:-.01em;}
+  .brand p{margin:0; color:var(--muted); font-size:13px;}
+  .prog{margin:22px 0 4px; display:flex; align-items:center; gap:10px;}
+  .bar{flex:1; height:6px; background:var(--line); border-radius:99px; overflow:hidden;}
+  .bar > span{display:block; height:100%; background:var(--accent); width:0; transition:width .4s ease;}
+  .prog .count{font-size:12px; color:var(--muted); white-space:nowrap;}
+  nav{margin-top:4px;}
+  .navgroup{margin-top:22px;}
+  .navlabel{font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.12em;
+    text-transform:uppercase; margin:0 0 8px; padding-left:6px;}
+  .navtabs{display:flex; flex-direction:column; gap:1px;}
+  .tab{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:9px 12px;
+    border:none; border-left:2px solid transparent; background:transparent; border-radius:0 8px 8px 0;
+    cursor:pointer; font-size:14px; color:var(--ink); font-family:inherit; transition:.12s; line-height:1.4;}
+  .tab:hover{background:var(--bg);}
+  .tab.active{background:var(--accent-soft); color:var(--accent-ink); font-weight:500; border-left-color:var(--accent);}
+  .tab .n{font-size:12px; color:var(--muted); min-width:14px; text-align:center;}
+  .tab.active .n{color:var(--accent-ink);}
+  .tab .dot{width:7px; height:7px; border-radius:50%; flex-shrink:0; background:transparent; border:1.5px solid var(--muted); opacity:.45;}
+  .tab.done .dot{background:var(--accent); border-color:var(--accent); opacity:1;}
+  .content{flex:1; min-width:0; padding:52px 60px 100px;}
+  .panel-wrap{max-width:760px; margin:0 auto;}
+  .badge{display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:30px; padding:0 10px;
+    border-radius:8px; background:var(--accent-soft); color:var(--accent-ink); font-weight:700; font-size:14px; flex-shrink:0;}
+  @media (max-width:860px){
+    .app{flex-direction:column;}
+    .sidebar{width:auto; height:auto; position:static; border-right:none; border-bottom:1px solid var(--line); padding:22px 18px;}
+    .navtabs{flex-direction:row; flex-wrap:wrap; gap:6px;}
+    .tab{width:auto; border:1px solid var(--line); border-radius:99px; padding:7px 12px;}
+    .tab.active{border-color:var(--accent);}
+    .content{padding:28px 18px 80px;}
+  }
   .ttl-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   .ttl-row h2{font-size:20px; font-weight:700; margin:0;}
   .maps{margin:14px 0 0; font-size:13.5px; color:var(--muted);}
@@ -102,21 +113,24 @@
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>JS → Node.js 銜接教學</h1>
-    <p>給新手：先把 JS 觀念弄懂 → 再看它怎麼延伸到 Node.js · 7 課打通地基</p>
-  </header>
-
-  <div class="prog">
-    <div class="bar"><span id="barFill"></span></div>
-    <div class="count" id="count">學完 0 / 7</div>
-  </div>
-
-  <nav id="tabs"></nav>
-  <div class="panel" id="panel"></div>
-
-  <div class="tip">進度自動存在這台瀏覽器 · 一課一課來，看得到終點 · <button class="reset" id="reset">清除進度重來</button></div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>JS → Node.js</h1>
+      <p>銜接教學 · 給新手</p>
+    </div>
+    <div class="prog">
+      <div class="bar"><span id="barFill"></span></div>
+      <div class="count" id="count">學完 0 / 7</div>
+    </div>
+    <nav id="tabs"></nav>
+  </aside>
+  <main class="content">
+    <div class="panel-wrap">
+      <div class="panel" id="panel"></div>
+      <div class="tip">進度自動存在這台瀏覽器 · 看得到終點 · <button class="reset" id="reset">清除進度重來</button></div>
+    </div>
+  </main>
 </div>
 
 <script>
@@ -138,7 +152,7 @@ const LESSONS = [
       {label:'怎麼把裡面的值「讀出來」（兩種寫法，結果一樣）', code:'console.log(member.name);      // 小華   ← 點記法（最常用）\nconsole.log(member["age"]);    // 25     ← 括號記法',
        note:'member.name 你就讀成：「去 member 這張卡，拿 name 這格的值」。'}
     ],
-    key:'💡 記這句就好：<code>物件.屬性</code> = 從物件裡拿出某一格的值。',
+    key:' 記這句就好：<code>物件.屬性</code> = 從物件裡拿出某一格的值。',
     p2intro:'你已經會物件了。Node 裡的 <code>req</code>、<code>res</code>、<code>data</code>、<code>module.exports</code> 其實都是物件 —— 觀念沒變，只是「誰建立的、什麼時候用」不同。<b>我們用「開一家飲料店」來想，一次全懂：</b>',
     p2:[
       {code:'http.createServer((req, res) => {\n  console.log(req.url);     // 例如 "/todos"\n  console.log(req.method);  // 例如 "GET"\n});',
@@ -161,7 +175,7 @@ const LESSONS = [
       {code:'} else if (req.method === "OPTIONS") {\n  res.writeHead(200, headers);\n  res.end();   // 回 200 說「可以送」\n}',
        explain:'<b>OPTIONS（預檢請求）：</b>瀏覽器送 POST/DELETE 前，會先偷偷送一個 <code>OPTIONS</code> 問「我可以送嗎？」→ 後端要回 200 + headers 說「可以」。<b>一句話：CORS 是瀏覽器的安全鎖，headers + OPTIONS 是後端開門讓它進，不是 Node 壞掉。</b>'}
     ],
-    p2end:'🔑 <code>req</code>/<code>res</code> 是 Node 自動給你的物件（看需求、回應）；<code>data</code> 是你自己建的物件；<code>module.exports</code> 是把功能拆到別檔案公開；<code>createServer</code> 把它們組成一台伺服器。（真實伺服器會多 CORS headers + OPTIONS 預檢 —— 那是瀏覽器的安全規矩。）',
+    p2end:' <code>req</code>/<code>res</code> 是 Node 自動給你的物件（看需求、回應）；<code>data</code> 是你自己建的物件；<code>module.exports</code> 是把功能拆到別檔案公開；<code>createServer</code> 把它們組成一台伺服器。（真實伺服器會多 CORS headers + OPTIONS 預檢 —— 那是瀏覽器的安全規矩。）',
     practice:[
       {ask:'有 <code>const todo = { title: "寫作業", done: false };</code>，我要拿出 <code>"寫作業"</code>，要怎麼寫？',
        opts:[['<code>todo.title</code>',true],['<code>todo["寫作業"]</code>',false],['<code>title.todo</code>',false]],
@@ -187,7 +201,7 @@ const LESSONS = [
       {label:'其實它只是「裝箱」的反向', code:'// 第 1 課：把東西「裝進」物件\nconst member = { name: "小華", age: 25 };\n\n// 這一課：把東西從物件「拿出來」\nconst { name, age } = member;',
        note:'一個是裝箱、一個是拆箱，同一件事的正反兩面。你已經會裝箱了，拆箱只是反過來。'}
     ],
-    key:'💡 看到 <code>const { X } = Y</code>，照這句讀：「<b>從 Y 裡面，把那格叫 X 的，拿出來變成獨立的 X</b>」。記這句讀法，比背規則好用。',
+    key:' 看到 <code>const { X } = Y</code>，照這句讀：「<b>從 Y 裡面，把那格叫 X 的，拿出來變成獨立的 X</b>」。記這句讀法，比背規則好用。',
     p2intro:'先搞懂 <code>require</code> 本身：<b>require = 進貨</b>，把別的檔案或套件「拿進來用」。它跟 <code>module.exports</code>（出餐窗口）剛好是一對 —— 一邊擺出來、一邊拿進去：',
     p2:[
       {code:'// utils.js —— 把功能擺上「出餐窗口」\nmodule.exports = { makeTodo };\n\n// app.js —— 用 require「進貨」拿回來\nconst utils = require("./utils");\nutils.makeTodo("買牛奶");   // 用 .makeTodo 拿出功能',
@@ -203,7 +217,7 @@ const LESSONS = [
       {code:'// 每個 .js 檔，Node 都自動給一個 module.exports（出貨箱），\n// 一開始是空的 {}。\n\n// fileManager.js（要被別人用）→ 把東西裝進出貨箱\nmodule.exports = { saveData, loadData };\n\n// app.js（主程式，去 require 別人）→ 不出貨，\n//   通常不用寫 module.exports（箱子一直空的也沒關係）',
        explain:'每個檔案是<b>獨立的房間</b>，裡面的變數別的房間看不到 —— 除非放進出貨箱。<code>require</code> 是<b>橋</b>，把出貨箱搬回來。誰被 require → 誰要寫 <code>module.exports</code>；該寫卻忘了 → 別人拿到空 <code>{}</code>，一呼叫就報錯。'}
     ],
-    p2end:'🔑 <code>require("./x")</code> = 「跑一遍 x 檔案、把它的 <code>module.exports</code> 拿回來」。有 <code>./</code> 找自己的檔案、沒有找套件／內建。每個檔案出生就有出貨箱（空 <code>{}</code>），只有「要被別人用」的檔案才裝東西進去。',
+    p2end:' <code>require("./x")</code> = 「跑一遍 x 檔案、把它的 <code>module.exports</code> 拿回來」。有 <code>./</code> 找自己的檔案、沒有找套件／內建。每個檔案出生就有出貨箱（空 <code>{}</code>），只有「要被別人用」的檔案才裝東西進去。',
     practice:[
       {ask:'<code>const box = { socks: "襪子" }; const { shoes } = box;</code>，<code>shoes</code> 會是？',
        opts:[['<code>undefined</code>（箱子裡沒有 shoes 那格）',true],['<code>"襪子"</code>',false],['報錯',false]],
@@ -237,19 +251,19 @@ const LESSONS = [
       {label:'④ callback：把「機器」交給別人，讓他幫你按', code:'[1, 2, 3].forEach((n) => {\n  console.log(n);\n});\n// forEach 會對 1、2、3 各「按一次」你給的機器',
        note:'你把 (n) => {...} 這台小機器「交給」forEach，它在對的時機（每個元素）幫你按一次。這個被交出去、等別人按的函式，就叫 callback。'}
     ],
-    key:'💡 函式 = 果汁機：<code>function 名字(參數){ return 成品 }</code> 做機器、<code>名字(...)</code> 按下去用。<b>return</b> 把成品交給你、<b>console.log</b> 只是顯示。箭頭函式是短寫法；把函式交給別人按 = <b>callback</b>。',
+    key:' 函式 = 果汁機：<code>function 名字(參數){ return 成品 }</code> 做機器、<code>名字(...)</code> 按下去用。<b>return</b> 把成品交給你、<b>console.log</b> 只是顯示。箭頭函式是短寫法；把函式交給別人按 = <b>callback</b>。',
     deepLabel:'再深入一點（函式進階，但很重要 — 這裡沒學好，後面會累）',
     deep:[
       {label:'① 同一台機器，丟不同東西 → 不同結果（這才是「重複用」）', code:'function greet(name) {\n  return "嗨 " + name;\n}\n\ngreet("小華");   // "嗨 小華"\ngreet("阿明");   // "嗨 阿明"  ← 同一台機器，丟不同人',
        note:'name 只是「暫時代號」，呼叫時丟的值會自動對進去。多個參數要「對號入座」，位置很重要：greet(名字, 年齡) 跟 greet(年齡, 名字) 結果會錯。'},
-      {label:'② ⭐ 最關鍵：greet（機器本身）vs greet()（按下去）', code:'greet      // 機器本身（那台果汁機，還沒按）\ngreet()    // 按下去 → 拿到成品\n\n// callback 是把「機器本身」交出去，讓別人之後按：\nsetTimeout(greet, 1000);    // ✅ 交機器，1 秒後它幫你按\nsetTimeout(greet(), 1000);  // ❌ 你「現在就按了」，交出去的是成品',
+      {label:'②  最關鍵：greet（機器本身）vs greet()（按下去）', code:'greet      // 機器本身（那台果汁機，還沒按）\ngreet()    // 按下去 → 拿到成品\n\n// callback 是把「機器本身」交出去，讓別人之後按：\nsetTimeout(greet, 1000);    //  交機器，1 秒後它幫你按\nsetTimeout(greet(), 1000);  //  你「現在就按了」，交出去的是成品',
        note:'要「交機器」就不加 ()；要「現在拿成品」才加 ()。這是新手最常踩的坑，也是 callback 的核心。'},
       {label:'③ 沒 return → 拿到 undefined；return 會「中止」函式', code:'function noReturn(x) {\n  x * 2;            // 算了，但沒交出來\n}\nconst r = noReturn(5);   // r 是 undefined！\n\nfunction test() {\n  return "我先走";\n  console.log("我不會被執行");   // return 之後就到不了\n}',
        note:'忘了寫 return → 呼叫它得到 undefined（新手常卡這）。return 一執行，函式立刻結束，後面不會跑。'},
       {label:'④ 作用域：函式裡的變數，外面看不到', code:'function makeJuice() {\n  const fruit = "蘋果";   // 只活在這個函式「房間」裡\n  return fruit + "汁";\n}\n\nmakeJuice();          // "蘋果汁"\nconsole.log(fruit);   // 報錯！外面看不到房間裡的 fruit',
        note:'函式像一個「房間」，裡面宣告的變數只有房間內用得到。好處：每台機器自己管自己，不會互相打架。'}
     ],
-    deepKey:'💡 串起來：函式是一種「值」（能存進變數、能傳給別人），所以才能把「機器本身」交出去當 callback —— 別人在對的時機 <code>按下去()</code>。記住：參數對號入座、沒 return 給 undefined、變數關在房間裡、交機器不加 ()。',
+    deepKey:' 串起來：函式是一種「值」（能存進變數、能傳給別人），所以才能把「機器本身」交出去當 callback —— 別人在對的時機 <code>按下去()</code>。記住：參數對號入座、沒 return 給 undefined、變數關在房間裡、交機器不加 ()。',
     p2intro:'Node 到處在「把函式當參數送出去」，看懂這個就不怕那一堆 =&gt;：',
     p2:[
       {code:'http.createServer((req, res) => {\n  // 每次有人來請求，這裡就跑一次\n});',
@@ -257,7 +271,7 @@ const LESSONS = [
       {code:'req.on("data", (chunk) => {\n  body += chunk;\n});',
        explain:'翻成白話：「<b>當有資料進來時</b>，幫我呼叫這個函式」。這就是你卡的 POST body 那段。'}
     ],
-    p2end:'🔑 看到 <code>(req, res) => {}</code> 被當參數傳進去，它就是一個 callback —— 等對的時機被呼叫。',
+    p2end:' 看到 <code>(req, res) => {}</code> 被當參數傳進去，它就是一個 callback —— 等對的時機被呼叫。',
     practice:[
       {ask:'函式裡想把答案「交出去給人接著用」，要用哪個？',
        opts:[['<code>return</code>',true],['<code>console.log</code>',false]],
@@ -283,13 +297,13 @@ const LESSONS = [
       {label:'if / else 分岔', code:'const age = 20;\n\nif (age >= 18) {\n  console.log("成年");\n} else {\n  console.log("未成年");\n}'},
       {label:'=== 和 && 的行為', code:'console.log(1 === 1);      // true\nconsole.log(1 === "1");    // false  （數字1 不等於 字串"1"）\n\nconsole.log(true && true);   // true\nconsole.log(true && false);  // false  （有一邊不成立就 false）'}
     ],
-    key:'💡 <code>===</code> 比「是不是完全一樣」；<code>&&</code> 要「兩邊都成立」。',
+    key:' <code>===</code> 比「是不是完全一樣」；<code>&&</code> 要「兩邊都成立」。',
     p2intro:'API 的「路由」其實就是一堆 if 判斷：',
     p2:[
       {code:'if (req.url === "/todos" && req.method === "GET") {\n  // 取得全部待辦\n}',
        explain:'白話：「<b>如果</b> 對方要的路徑是 /todos <b>而且</b> 動作是 GET，<b>就</b>做取得全部」。url 和 method 兩個都要對，所以用 <code>&&</code>。'}
     ],
-    p2end:'🔑 API 路由 = 用 if 判斷 <code>req.url</code> + <code>req.method</code>，決定這次請求要做什麼。',
+    p2end:' API 路由 = 用 if 判斷 <code>req.url</code> + <code>req.method</code>，決定這次請求要做什麼。',
     practice:[
       {ask:'<code>1 === "1"</code> 的結果是？',
        opts:[['<code>false</code>（數字不等於字串）',true],['<code>true</code>',false]],
@@ -312,7 +326,7 @@ const LESSONS = [
       {label:'打包與拆箱', code:'const obj = { title: "買牛奶" };\n\nconst text = JSON.stringify(obj);   // \'{"title":"買牛奶"}\'  ← 字串\nconst back = JSON.parse(text);      // { title: "買牛奶" }   ← 物件\n\nconsole.log(back.title);            // 買牛奶',
        note:'物件可以 .title；JSON 字串不行（它只是一串文字，要先 parse 拆箱）。'}
     ],
-    key:'💡 出去先 <code>stringify</code>（打包／字串化），進來先 <code>parse</code>（拆箱）。stringify 名字 = 字串化。',
+    key:' 出去先 <code>stringify</code>（打包／字串化），進來先 <code>parse</code>（拆箱）。stringify 名字 = 字串化。',
     deepLabel:'怎麼判斷：我該用 stringify 還是 parse？',
     deep:[
       {label:'最快：看資料是「進」還是「出」', code:'// 往外送 / 存起來（出）→ stringify（打包）\nres.end(JSON.stringify(todos));\nfs.writeFile("data.json", JSON.stringify(todos));\n\n// 收進來 / 讀出來（進）→ parse（拆箱）\nconst data  = JSON.parse(body);\nconst todos = JSON.parse(fileText);',
@@ -320,7 +334,7 @@ const LESSONS = [
       {label:'卡住時的「症狀判斷」', code:'// 症狀 A：手上是一串 {"title":"..."} 文字，.title 卻 undefined\n//   → 它其實是字串，忘了 parse 拆箱\n\n// 症狀 B：想把物件傳出去，對方收到 [object Object]\n//   → 忘了 stringify 打包',
        note:'看到 undefined（讀不到屬性）多半是「該 parse 沒 parse」；看到 [object Object] 多半是「該 stringify 沒 stringify」。'}
     ],
-    deepKey:'💡 一句話：要「送出去／存」就 stringify；「收進來／讀」要用就 parse。',
+    deepKey:' 一句話：要「送出去／存」就 stringify；「收進來／讀」要用就 parse。',
     p2intro:'這就是你 POST 那段的核心：',
     p2:[
       {code:'req.on("end", () => {\n  const data = JSON.parse(body);   // body 是字串 → 拆箱成物件\n  console.log(data.title);        // 這樣才讀得到\n});',
@@ -328,7 +342,7 @@ const LESSONS = [
       {code:'res.end(JSON.stringify(todos));   // 回傳前打包成字串',
        explain:'要回傳給前端前，先 <code>JSON.stringify</code> 把物件打包成字串再送出。'}
     ],
-    p2end:'🔑 進來先 parse、出去先 stringify。忘了 parse → 讀 .title 是 undefined，這就是最常卡的地方。',
+    p2end:' 進來先 parse、出去先 stringify。忘了 parse → 讀 .title 是 undefined，這就是最常卡的地方。',
     practice:[
       {ask:'<code>JSON.stringify(物件)</code> 是在做什麼？',
        opts:[['物件 → 字串（打包）',true],['字串 → 物件（拆箱）',false]],
@@ -351,15 +365,15 @@ const LESSONS = [
       {label:'三個最常用的方法', code:'const nums = [1, 2, 3, 4];\n\ntodos.push("運動");                 // 加到尾巴\nconst big = nums.filter((n) => n > 2);   // [3, 4]  篩選符合的\nconst dbl = nums.map((n) => n * 2);      // [2,4,6,8]  每個都改造',
        note:'filter / map 裡面那個 (n) => ... 就是第 3 課的 callback。'}
     ],
-    key:'💡 <code>push</code> 加資料、<code>filter</code> 篩資料、<code>map</code> 改造每一筆。',
+    key:' <code>push</code> 加資料、<code>filter</code> 篩資料、<code>map</code> 改造每一筆。',
     p2intro:'後端天天用陣列裝資料、處理資料：',
     p2:[
       {code:'const todos = [];   // 空清單，用 [] 建立（後端、前端都一樣）\n\n// 來一筆，就放一張「卡」（物件）進清單\ntodos.push({ title: "買牛奶", id: uuidv4() });\ntodos.push({ title: "寫作業", id: uuidv4() });\n\n// todos 現在是「一疊卡」：\n// [\n//   { title: "買牛奶", id: "..." },\n//   { title: "寫作業", id: "..." }\n// ]',
-       explain:'⚠️ 注意：<code>todos</code> 用 <code>[]</code> 建立 —— <b>後端陣列照樣用 []，沒有「後端不用 []」這回事</b>。<code>push</code> 進去的 <code>{ ... }</code> 是<b>物件</b>（一筆 todo），不是陣列。<b>[] 是清單、{} 是一張卡，陣列裡裝物件 = 一疊卡。</b>'},
+       explain:' 注意：<code>todos</code> 用 <code>[]</code> 建立 —— <b>後端陣列照樣用 []，沒有「後端不用 []」這回事</b>。<code>push</code> 進去的 <code>{ ... }</code> 是<b>物件</b>（一筆 todo），不是陣列。<b>[] 是清單、{} 是一張卡，陣列裡裝物件 = 一疊卡。</b>'},
       {code:'const vips = members.filter((m) => m.level === "VIP");\nconst names = members.map((m) => m.name);',
        explain:'直播第一堂整理會員就用到：<code>filter</code> 篩出 VIP、<code>map</code> 取出每個人的名字。'}
     ],
-    p2end:'🔑 資料進後端，幾乎都是「裝進陣列 → 用 filter/map 整理 → 回傳」。',
+    p2end:' 資料進後端，幾乎都是「裝進陣列 → 用 filter/map 整理 → 回傳」。',
     practice:[
       {ask:'<code>const a = [10, 20, 30];</code>，<code>a[0]</code> 是？',
        opts:[['<code>10</code>（從 0 開始數）',true],['<code>20</code>',false]],
@@ -382,25 +396,25 @@ const LESSONS = [
       {label:'印出順序（最重要的感覺）', code:'console.log("1");\nmain();          // 裡面遇到 await，先讓出去\nconsole.log("3");\n\n// 印出順序：1 → 3 →（main 的 await 好了才回來跑）',
        note:'順序會「跳」，正是因為遇到 await 先去做後面的事了。'}
     ],
-    key:'💡 看到 <code>async / await</code>，就是在處理「要等一下」的事，而且它不會卡住整支程式。',
+    key:' 看到 <code>async / await</code>，就是在處理「要等一下」的事，而且它不會卡住整支程式。',
     deepLabel:'網路請求 / fetch / axios（非同步最常見的用途）',
     deep:[
       {label:'① 什麼是網路請求？為什麼一定非同步', code:'// 網頁跟伺服器「要資料 / 送資料」= 網路請求\n// 像叫外送：發出請求後不站在門口乾等，\n// 繼續做別的，資料回來再處理 → 這就是非同步\n\nconst res = await axios.get("https://api.xxx.com/todos");\n//          ↑ await：因為要「等伺服器回來」',
        note:'前端要顯示即時資料（貼文、天氣、商品）都靠網路請求去跟後端要。因為要等網路，所以一定用 async/await，不然網頁會卡死。'},
       {label:'② 兩種發請求的工具：fetch（內建）vs axios（套件）', code:'// fetch（瀏覽器內建，不用裝）\nconst res  = await fetch(url);\nconst data = await res.json();   // 要自己寫 res.json() 轉成物件\n\n// axios（npm install axios，更好用）\nconst res = await axios.get(url);\nconsole.log(res.data);           // res.data 已經是物件，免轉',
        note:'axios.get(url) 拿資料、axios.post(url, data) 送資料；回來的資料在 res.data。fetch 是「自己煮」，axios 是「叫外送平台」——都吃得到飯，axios 幫你處理掉雜事。'},
-      {label:'③ ⭐ 何時要自己寫 parse？看「用什麼工具」', code:'// 後端自己接 body / 讀檔 → 字串 → 要寫 JSON.parse\nconst data = JSON.parse(body);\n\n// fetch → 寫 res.json()（它幫你 parse）\nconst data = await res.json();\n\n// axios → 不用寫，res.data 已是物件\nres.data',
+      {label:'③  何時要自己寫 parse？看「用什麼工具」', code:'// 後端自己接 body / 讀檔 → 字串 → 要寫 JSON.parse\nconst data = JSON.parse(body);\n\n// fetch → 寫 res.json()（它幫你 parse）\nconst data = await res.json();\n\n// axios → 不用寫，res.data 已是物件\nres.data',
        note:'重點是「用哪個工具」不是「有沒有 res」——fetch 也有 res，但還是要寫 res.json()。伺服器永遠送 JSON 字串，差別只在誰幫你轉。對已是物件的東西（axios res.data）再 parse 會報錯。'}
     ],
-    deepKey:'💡 網路請求 = 跟伺服器要 / 送資料，因為要等所以用 <code>await</code>。轉成物件：後端接 body 要 <code>JSON.parse</code>、fetch 寫 <code>res.json()</code>、axios 直接 <code>res.data</code>。',
+    deepKey:' 網路請求 = 跟伺服器要 / 送資料，因為要等所以用 <code>await</code>。轉成物件：後端接 body 要 <code>JSON.parse</code>、fetch 寫 <code>res.json()</code>、axios 直接 <code>res.data</code>。',
     p2intro:'直播第一堂的讀檔、之後的 Express、資料庫、登入驗證，全是非同步：',
     p2:[
       {code:'const fs = require("fs/promises");\n\nconst text = await fs.readFile("members.json", "utf-8");\nconst members = JSON.parse(text);',
        explain:'讀檔要等硬碟，所以用 <code>await</code>。讀完是字串，再用第 5 課的 <code>JSON.parse</code> 變物件 —— 你看，觀念全串起來了。'},
-      {code:'// fs = 管檔案的工具箱（讀寫刪檔、建資料夾），Node 內建\n// fs 有三種「型號」：\n//   fs.readFileSync      → 同步，會卡住整支程式（線上禁用）\n//   fs.readFile(.., cb)  → callback 版，不卡但寫起來繞\n//   fs/promises          → 不卡 + 可以 await，最乾淨 ✅\n\nconst fs = require("fs/promises");   // 選「promises 型號」',
+      {code:'// fs = 管檔案的工具箱（讀寫刪檔、建資料夾），Node 內建\n// fs 有三種「型號」：\n//   fs.readFileSync      → 同步，會卡住整支程式（線上禁用）\n//   fs.readFile(.., cb)  → callback 版，不卡但寫起來繞\n//   fs/promises          → 不卡 + 可以 await，最乾淨 \n\nconst fs = require("fs/promises");   // 選「promises 型號」',
        explain:'<b>那 <code>fs/promises</code> 是什麼？</b>就是 fs 的「<b>可以 await 的版本</b>」。功能完全一樣（readFile / writeFile / mkdir / rename…），只是換成配 async/await 的乾淨寫法，<b>沒有特殊新功能</b>。內建、免 npm install；<code>/promises</code> = 跟 Node 要「promise 型號」。'}
     ],
-    p2end:'🔑 這關通了，你就有資格往 Express、資料庫前進 —— 因為它們全都是非同步。',
+    p2end:' 這關通了，你就有資格往 Express、資料庫前進 —— 因為它們全都是非同步。',
     practice:[
       {ask:'<code>await</code> 只能寫在哪裡？',
        opts:[['<code>async</code> 函式裡面',true],['任何地方都行',false]],
@@ -456,7 +470,7 @@ const API_STAGES = [
   {title:'③ 刪全部（DELETE /todos）', what:'把整面牆清空。',
    code:'} else if (req.url === "/todos" && req.method === "DELETE") {\n  todos.length = 0;     // 把清單清空（長度設 0）\n  res.writeHead(200, headers);\n  res.end(JSON.stringify({ status: "success", data: todos }));\n}',
    note:'todos.length = 0 = 清空。因為 todos 是 const 不能 todos = []，所以用 length = 0。'},
-  {title:'★ 先備知識：刪/改「單筆」要先「找到那一筆」', what:'刪一筆/改一筆的網址帶 id（/todos/abc）。先學 4 個工具：',
+  {title:' 先備知識：刪/改「單筆」要先「找到那一筆」', what:'刪一筆/改一筆的網址帶 id（/todos/abc）。先學 4 個工具：',
    code:'req.url.startsWith("/todos/")        // 網址開頭是不是 /todos/\nreq.url.split("/")                   // "/todos/abc" → ["", "todos", "abc"]\n                                     //   第 [2] 個就是 id\ntodos.findIndex(t => t.id === id)    // 找這筆在第幾個（找不到回 -1）\ntodos.splice(位置, 1)                // 從清單刪掉指定位置那 1 筆',
    note:'流程：切出 id → findIndex 找位置 → 找到就 splice 刪/改、找不到回 404。'},
   {title:'④ 刪一筆（DELETE /todos/:id）', what:'從網址切出 id，找到那筆，刪掉。',
@@ -518,23 +532,23 @@ function makeTab(into, html, isActive, onClick, extraClass){
 function renderTabs(){
   tabsEl.innerHTML = "";
 
-  // 🎬 影音課程：7 課觀念 + Todolist API 實戰
-  const g1 = makeGroup("🎬 影音課程");
+  // 影音課程：7 課觀念 + Todolist API 實戰
+  const g1 = makeGroup("影音課程");
   LESSONS.forEach((s,i)=>{
     makeTab(g1, '<span class="dot"></span><span class="n">'+(i+1)+'</span><span>'+s.js+'</span>',
       i===active, ()=>{ active=i; state.active=i; save(); render(); }, (state.done[i]?" done":""));
   });
-  makeTab(g1, '<span>🛠️ Todolist API</span>', active==='api',
+  makeTab(g1, '<span class="dot"></span><span class="n"></span><span>Todolist API 實戰</span>', active==='api',
     ()=>{ active='api'; state.active='api'; save(); render(); });
 
-  // 🧠 觀念複習（思考導向）
-  const g2 = makeGroup("🧠 觀念複習（思考導向）");
-  makeTab(g2, '<span>💭 問題 → 用什麼</span>', active==='think',
+  // 觀念複習（思考導向）
+  const g2 = makeGroup("觀念複習");
+  makeTab(g2, '<span class="dot"></span><span class="n"></span><span>問題 → 用什麼</span>', active==='think',
     ()=>{ active='think'; state.active='think'; save(); render(); });
 
-  // 🏅 每日任務
-  const g3 = makeGroup("🏅 每日任務");
-  makeTab(g3, '<span>Day 1 · 模組 / fs</span>', active==='tasks',
+  // 每日任務
+  const g3 = makeGroup("每日任務");
+  makeTab(g3, '<span class="dot"></span><span class="n"></span><span>Day 1 · 模組 / fs</span>', active==='tasks',
     ()=>{ active='tasks'; state.active='tasks'; save(); render(); });
 }
 
@@ -545,7 +559,7 @@ function codeBlock(b){
 }
 
 function renderApiCourse(){
-  let h = '<div class="ttl-row"><span class="badge">🛠️</span><h2>Todolist API：增刪改查（CRUD）</h2></div>';
+  let h = '<div class="ttl-row"><h2>Todolist API：增刪改查（CRUD）</h2></div>';
   h += '<p class="maps">整個 Todolist 系列在教的核心：讓前端對待辦「增刪改查」。用「便利貼牆」想 —— todos 是貼滿便利貼的牆。</p>';
   h += '<p class="obs"><b>路由地圖</b> — GET /todos 查全部 ｜ POST /todos 增一筆 ｜ DELETE /todos 刪全部 ｜ DELETE /todos/:id 刪一筆 ｜ PATCH /todos/:id 改一筆</p>';
   API_STAGES.forEach(s=>{
@@ -554,29 +568,29 @@ function renderApiCourse(){
     h += '<pre><code>'+esc(s.code)+'</code></pre>';
     if(s.note){ h += '<p class="codenote">'+s.note+'</p>'; }
   });
-  h += '<div class="key">💡 帶 id 的操作（刪一筆、改一筆）都是同一套路：<b>從網址切出 id → findIndex 找位置 → 找到就動手、找不到回 404</b>。</div>';
+  h += '<div class="key"> 帶 id 的操作（刪一筆、改一筆）都是同一套路：<b>從網址切出 id → findIndex 找位置 → 找到就動手、找不到回 404</b>。</div>';
   panelEl.innerHTML = h;
 }
 
 function renderThink(){
-  let h = '<div class="ttl-row"><span class="badge">🧠</span><h2>觀念複習：問題 → 用什麼</h2></div>';
+  let h = '<div class="ttl-row"><h2>觀念複習：問題 → 用什麼</h2></div>';
   h += '<p class="maps">寫 code 前先問自己：「我現在這個念頭，是哪一種？」→ 對照下面 → 知道該用什麼。這是從「看得懂」走到「自己寫得出」的關鍵。</p>';
   h += '<div class="partlabel">先看「怎麼思考」一次（以 if/else 為例）</div>';
   h += '<div class="key" style="background:var(--amber-soft); color:var(--ink)">① 先問「這裡有幾種情況？」→ 不只一種 → ② 「要分別處理」＝ 需要分岔 → 用 <code>if/else</code> → ③ 「怎麼分辨？」用條件（req.url + req.method）→ ④ 每種情況填進 { } → ⑤ 都不符合 → else。<br><b>結論：看到「要依不同情況做不同事」這個念頭，就是 if/else 的時機。</b></div>';
   h += '<div class="partlabel">念頭 → 工具 對照（8 個核心）</div>';
   THINK.forEach(c=>{
-    h += '<div class="nodeitem"><p class="p2intro" style="margin:16px 0 4px"><b>💭 念頭：</b>'+c.q+'</p>';
+    h += '<div class="nodeitem"><p class="p2intro" style="margin:16px 0 4px"><b> 念頭：</b>'+c.q+'</p>';
     h += '<p class="explain" style="margin:0 0 6px"><b>→ 該用：'+c.tool+'</b></p>';
     h += '<pre><code>'+esc(c.js)+'</code></pre>';
     h += '<p class="codenote">Node 對應：'+c.node+'</p></div>';
   });
-  h += '<div class="key">💡 寫之前先問：「<b>如果…就 / 分幾種</b>」→ if/else ｜「<b>每一筆 / 全部</b>」→ forEach/map ｜「<b>會重複用</b>」→ 函式 ｜「<b>要等</b>」→ await ｜「<b>包在一起</b>」→ 物件。</div>';
+  h += '<div class="key"> 寫之前先問：「<b>如果…就 / 分幾種</b>」→ if/else ｜「<b>每一筆 / 全部</b>」→ forEach/map ｜「<b>會重複用</b>」→ 函式 ｜「<b>要等</b>」→ await ｜「<b>包在一起</b>」→ 物件。</div>';
   panelEl.innerHTML = h;
 }
 
 function renderTasks(){
   const td = state.taskDone || (state.taskDone = {});
-  let h = '<div class="ttl-row"><span class="badge">🏅</span><h2>每日任務（打卡）</h2></div>';
+  let h = '<div class="ttl-row"><h2>每日任務（打卡）</h2></div>';
   h += '<p class="maps">六角的每日任務，邊做邊用前面學的觀念。先自己試，卡住再看解答。</p>';
   TASKS.forEach((t, ti)=>{
     h += '<div class="partlabel">'+t.day+' — '+t.title+'</div>';
@@ -587,7 +601,7 @@ function renderTasks(){
     h += '<div style="margin:16px 0"><button class="ghost" data-sol="'+ti+'">看參考解答</button></div>';
     h += '<div id="sol-'+ti+'" style="display:none">'+t.solution.map(codeBlock).join('')+'</div>';
     const done = !!td[ti];
-    h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" data-task="'+ti+'">'+(done?'✓ 已打卡（點可取消）':'我做完了（打卡）')+'</button></div>';
+    h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" data-task="'+ti+'">'+(done?' 已打卡（點可取消）':'我做完了（打卡）')+'</button></div>';
   });
   panelEl.innerHTML = h;
   panelEl.querySelectorAll('[data-sol]').forEach(btn=>{
@@ -605,7 +619,7 @@ function renderPanel(){
   const s = LESSONS[active];
   let h = '<div class="ttl-row"><span class="badge">'+(active+1)+'</span><h2>第 '+(active+1)+' 課：'+s.js+'</h2></div>';
   h += '<p class="maps">'+(s.mapsText || ('這個觀念之後在 Node 變成 → '+s.maps))+'</p>';
-  if(OBS[active]){ h += '<p class="obs"><b>📁 對應 Obsidian 單元</b> — '+OBS[active]+'</p>'; }
+  if(OBS[active]){ h += '<p class="obs"><b> 對應 Obsidian 單元</b> — '+OBS[active]+'</p>'; }
 
   h += '<div class="partlabel">'+(s.part1label || 'PART 1 ── 先把 JS 觀念弄懂')+'</div>';
   h += '<div class="concept">'+s.concept+'</div>';
@@ -637,7 +651,7 @@ function renderPanel(){
   });
 
   const done = !!state.done[active];
-  h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" id="markBtn">'+(done?'✓ 這課學完了（點可取消）':'我學完這課了')+'</button>'
+  h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" id="markBtn">'+(done?' 這課學完了（點可取消）':'我學完這課了')+'</button>'
      + '<div class="nav-btns"><button class="ghost" id="prev" '+(active===0?'disabled':'')+'>← 上一課</button>'
      + '<button class="ghost" id="next" '+(active===LESSONS.length-1?'disabled':'')+'>下一課 →</button></div></div>';
   panelEl.innerHTML = h;
