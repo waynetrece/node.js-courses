@@ -9,20 +9,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f7f6f2; --card:#ffffff; --ink:#1f2421; --muted:#6b6f6a; --line:#e6e3da;
-    --accent:#0f6e56; --accent-soft:#e1f5ee; --accent-ink:#0a4f3e;
-    --indigo:#534ab7; --indigo-soft:#eeedfe;
-    --amber:#854f0b; --amber-soft:#faeeda;
-    --code-bg:#1f2430; --code-ink:#e6e7eb;
-    --ok:#1d7a4d; --ok-soft:#e7f5ec; --bad:#b3261e; --bad-soft:#fbeaea;
-    --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04);
+    --bg:#f6f4ee; --card:#fffdf8; --ink:#222824; --muted:#68706a; --line:#e4dfd2;
+    --accent:#176b57; --accent-soft:#e2f3ec; --accent-ink:#0d4d3e;
+    --indigo:#4f57a6; --indigo-soft:#eef0fb;
+    --amber:#8a5a12; --amber-soft:#fbefd8;
+    --code-bg:#20242d; --code-ink:#f0f1eb;
+    --ok:#24734e; --ok-soft:#e4f3ea; --bad:#a83a32; --bad-soft:#f8e8e5;
+    --radius:12px; --shadow:0 1px 2px rgba(31,36,33,.06);
   }
   @media (prefers-color-scheme: dark){
-    :root{ --bg:#16181a; --card:#1f2326; --ink:#e9eae6; --muted:#9aa09a; --line:#31363a;
-      --accent:#5dcaa5; --accent-soft:#0f342b; --accent-ink:#9fe1cb;
-      --indigo:#afa9ec; --indigo-soft:#26215c; --amber:#ef9f27; --amber-soft:#412402;
-      --code-bg:#11141a; --code-ink:#e6e7eb;
-      --ok:#5dcaa5; --ok-soft:#103a2b; --bad:#f09595; --bad-soft:#3a1614; }
+    :root{ --bg:#171917; --card:#20231f; --ink:#ecebe5; --muted:#a4aaa2; --line:#34382f;
+      --accent:#7bd0ad; --accent-soft:#12372c; --accent-ink:#b9ead7;
+      --indigo:#b8c0ff; --indigo-soft:#252947; --amber:#e8aa4a; --amber-soft:#3e2b10;
+      --code-bg:#11151b; --code-ink:#f0f1eb;
+      --ok:#7bd0ad; --ok-soft:#12372c; --bad:#ee9b95; --bad-soft:#3b1d1a; }
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--bg); color:var(--ink);
@@ -57,14 +57,6 @@
   .panel-wrap{max-width:760px; margin:0 auto;}
   .badge{display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:30px; padding:0 10px;
     border-radius:8px; background:var(--accent-soft); color:var(--accent-ink); font-weight:700; font-size:14px; flex-shrink:0;}
-  @media (max-width:860px){
-    .app{flex-direction:column;}
-    .sidebar{width:auto; height:auto; position:static; border-right:none; border-bottom:1px solid var(--line); padding:22px 18px;}
-    .navtabs{flex-direction:row; flex-wrap:wrap; gap:6px;}
-    .tab{width:auto; border:1px solid var(--line); border-radius:99px; padding:7px 12px;}
-    .tab.active{border-color:var(--accent);}
-    .content{padding:28px 18px 80px;}
-  }
   .ttl-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   .ttl-row h2{font-size:20px; font-weight:700; margin:0;}
   .maps{margin:14px 0 0; font-size:13.5px; color:var(--muted);}
@@ -84,6 +76,18 @@
   .codenote{font-size:13.5px; color:var(--muted); margin:7px 0 0; padding-left:2px;}
   .key{margin:18px 0 0; padding:13px 16px; background:var(--accent-soft); color:var(--accent-ink);
     border-radius:10px; font-size:15px; font-weight:500;}
+  .learn-card{margin:18px 0 0; padding:18px; background:var(--card); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);}
+  .learn-card h3{margin:4px 0 10px; font-size:18px; line-height:1.45;}
+  .learn-card p{margin:8px 0; font-size:15px;}
+  .card-kicker{font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.04em;}
+  .step-card{margin:12px 0 0; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    background:rgba(125,125,125,.05);}
+  .step-card p{margin:6px 0; font-size:14px;}
+  .step-card span{color:var(--muted); font-weight:700;}
+  .simple-list{margin:8px 0 0; padding-left:20px;}
+  .simple-list li{margin:6px 0;}
+  .pattern-card pre{margin-top:6px;}
   .p2intro{font-size:15.5px; margin:0 0 6px;}
   .nodeitem{margin:16px 0 0;}
   .explain{font-size:14.5px; color:var(--muted); margin:7px 0 0; padding-left:2px;}
@@ -110,6 +114,40 @@
   button.mark.is-done{background:var(--ok-soft); color:var(--ok); border-color:var(--ok);}
   .tip{margin-top:26px; font-size:13.5px; color:var(--muted); text-align:center;}
   .reset{background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer; text-decoration:underline; font-family:inherit;}
+  .mobile-nav{position:fixed; left:0; right:0; bottom:0; z-index:30; grid-template-columns:repeat(5,1fr);
+    gap:2px; padding:8px 8px calc(8px + env(safe-area-inset-bottom)); background:var(--card);
+    border-top:1px solid var(--line); box-shadow:0 -6px 18px rgba(0,0,0,.08);}
+  .mobile-nav button{min-height:48px; border:0; border-radius:10px; background:transparent; color:var(--muted);
+    font-family:inherit; font-size:12px; font-weight:700;}
+  .mobile-nav button.active{background:var(--accent-soft); color:var(--accent-ink);}
+  @media (max-width:860px){
+    body{font-size:16px;}
+    .app{display:block; min-height:100vh;}
+    .sidebar{position:sticky; top:0; z-index:20; width:auto; height:auto; border-right:none;
+      border-bottom:1px solid var(--line); padding:14px 16px 12px; background:color-mix(in srgb, var(--card) 94%, transparent);
+      backdrop-filter:blur(12px);}
+    .brand h1{font-size:18px;}
+    .brand p{font-size:12px;}
+    .prog{margin:12px 0 0;}
+    nav{display:none;}
+    .content{padding:22px 16px 104px;}
+    .panel-wrap{max-width:none;}
+    .ttl-row h2{font-size:19px; line-height:1.35;}
+    .maps,.obs,.codenote{font-size:14px;}
+    .concept,.p2intro,.q .ask{font-size:16px;}
+    .learn-card{padding:16px; border-radius:14px;}
+    .learn-card h3{font-size:17px;}
+    pre{border-radius:12px; padding:14px; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+    pre code{font-size:13px; line-height:1.65;}
+    .opt,button.ghost,button.mark{min-height:44px;}
+    .foot{align-items:stretch;}
+    .nav-btns{width:100%;}
+    .nav-btns button{flex:1;}
+    .mobile-nav{display:grid;}
+  }
+  @media (min-width:861px){
+    .mobile-nav{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -132,6 +170,7 @@
     </div>
   </main>
 </div>
+<nav class="mobile-nav" id="mobileNav" aria-label="主要學習導覽"></nav>
 
 <script>
 const LESSONS = [
@@ -215,7 +254,9 @@ const LESSONS = [
       {code:'const x = require("./fileManager.js");\n\n// Node 看到這行會做 4 件事：\n// ① 找檔案：去同資料夾找 fileManager.js\n// ② 執行它：把整個檔案從上到下跑一遍\n// ③ 看它的 module.exports 變成什麼\n// ④ 把那個 module.exports 交還 → 就是 x',
        explain:'<b>require 到底怎麼運作？核心：</b><code>x</code> 就等於 fileManager.js 裡的 <code>module.exports</code>。require 不只是「看一眼功能」，是「<b>跑完整個檔案 + 把它的出貨箱拿回來</b>」。'},
       {code:'// 每個 .js 檔，Node 都自動給一個 module.exports（出貨箱），\n// 一開始是空的 {}。\n\n// fileManager.js（要被別人用）→ 把東西裝進出貨箱\nmodule.exports = { saveData, loadData };\n\n// app.js（主程式，去 require 別人）→ 不出貨，\n//   通常不用寫 module.exports（箱子一直空的也沒關係）',
-       explain:'每個檔案是<b>獨立的房間</b>，裡面的變數別的房間看不到 —— 除非放進出貨箱。<code>require</code> 是<b>橋</b>，把出貨箱搬回來。誰被 require → 誰要寫 <code>module.exports</code>；該寫卻忘了 → 別人拿到空 <code>{}</code>，一呼叫就報錯。'}
+       explain:'每個檔案是<b>獨立的房間</b>，裡面的變數別的房間看不到 —— 除非放進出貨箱。<code>require</code> 是<b>橋</b>，把出貨箱搬回來。誰被 require → 誰要寫 <code>module.exports</code>；該寫卻忘了 → 別人拿到空 <code>{}</code>，一呼叫就報錯。'},
+      {code:'// 誰要寫 module.exports？只問一句：\n//「這個檔案會被別人 require 嗎？」\n\n// fileManager.js → 會（app.js 會用它）→ 供應商，要出貨\nmodule.exports = { saveData, loadData };   // 要寫\n\n// app.js → 不會（它是主程式，去用別人）→ 客人，不出貨\n// （app.js 從頭到尾沒有 module.exports，這是正常的！）',
+       explain:'<b>判斷法（供應商 vs 客人）：</b><code>module.exports</code> = 出貨（公開給別人用）、<code>require</code> = 進貨（拿別人的來用）。會被別人 require 的檔案 = <b>供應商</b>，要出貨（寫）；主程式 <code>app.js</code> 是去 require 別人的 <b>客人</b>，沒人會用它，所以<b>不用寫</b>。<code>app.js</code> 沒寫不是漏寫，是不需要。'}
     ],
     p2end:' <code>require("./x")</code> = 「跑一遍 x 檔案、把它的 <code>module.exports</code> 拿回來」。有 <code>./</code> 找自己的檔案、沒有找套件／內建。每個檔案出生就有出貨箱（空 <code>{}</code>），只有「要被別人用」的檔案才裝東西進去。',
     practice:[
@@ -439,6 +480,169 @@ const OBS = [
   'JS：22-AJAX網路請求、23-AJAX-axios套件教學（速查表06-AJAX與非同步、打卡任務Day24）　｜　Node：01-Node.js基礎/直播第1堂'
 ];
 
+const APP_VIEWS = [
+  { id: "rescue", label: "救進度", group: "學習路線" },
+  { id: "course", label: "課程", group: "影音課程" },
+  { id: "stuck", label: "卡點", group: "新手支援" },
+  { id: "patterns", label: "練習", group: "新手支援" },
+  { id: "progress", label: "進度", group: "學習路線" }
+];
+
+const RESCUE_PLANS = [
+  {
+    title: "3 天救進度",
+    fit: "已經落後、但想先跟上 Todolist API 的最低可行路線。",
+    days: [
+      {
+        day: "Day 1",
+        focus: "物件 / JSON / 路由判斷",
+        read: "第 1 課物件、第 4 課條件判斷、第 5 課 JSON",
+        practice: "說出 req.url、req.method、data.title 各自在讀哪個物件欄位。",
+        done: "能口頭拆解 GET /todos 與 POST /todos 的 if 條件。"
+      },
+      {
+        day: "Day 2",
+        focus: "body / callback / async",
+        read: "第 3 課 callback、第 7 課非同步、Node 第 1 堂 fs/promises",
+        practice: "把 body += chunk、req.on('end')、await fs.readFile 分別翻成白話。",
+        done: "能說出哪些程式碼會等資料、哪些程式碼會先跑。"
+      },
+      {
+        day: "Day 3",
+        focus: "CRUD 變形練習",
+        read: "Todolist API 實戰、寫法生成訓練",
+        practice: "把 todos/title 改成 members/name，自己寫 GET 與 POST。",
+        done: "能不看影片寫出一個 POST /members 的流程骨架。"
+      }
+    ]
+  },
+  {
+    title: "7 天補底子",
+    fit: "每天 30 分鐘，先穩住最常卡住的觀念。",
+    days: [
+      { day: "Day 1", focus: "物件屬性", read: "第 1 課", practice: "obj.key / obj['key'] 互換", done: "看懂 req.url 與 data.title" },
+      { day: "Day 2", focus: "JSON", read: "第 5 課", practice: "stringify / parse 各寫一次", done: "知道 HTTP 傳字串" },
+      { day: "Day 3", focus: "if 路由", read: "第 4 課", practice: "列出 GET/POST/404 條件", done: "能畫路由流程" },
+      { day: "Day 4", focus: "callback", read: "第 3 課", practice: "標出 req.on 何時執行", done: "知道函式可被稍後呼叫" },
+      { day: "Day 5", focus: "async / await", read: "第 7 課", practice: "預測 1 -> 3 -> 2 -> 4 印出順序", done: "知道等待不等於卡住主 thread" },
+      { day: "Day 6", focus: "CRUD 單筆操作", read: "Todolist API 實戰", practice: "split -> findIndex -> splice", done: "能解釋刪一筆流程" },
+      { day: "Day 7", focus: "整合", read: "寫法生成訓練", practice: "POST members 變形題", done: "能從中文需求列出程式步驟" }
+    ]
+  },
+  {
+    title: "14 天重建底子",
+    fit: "想慢一點，把 JS 基礎和 Node 實作重新接起來。",
+    days: [
+      { day: "1-2", focus: "物件 / 陣列", read: "第 1 課、第 6 課", practice: "讀取、push、filter/map", done: "能看懂資料長相" },
+      { day: "3-4", focus: "JSON / HTTP", read: "第 5 課、Request/Response", practice: "parse / stringify / status code", done: "能分辨進來與出去" },
+      { day: "5-6", focus: "條件與路由", read: "第 4 課", practice: "GET/POST/DELETE/PATCH 條件表", done: "能設計路由地圖" },
+      { day: "7-8", focus: "函式與 callback", read: "第 3 課", practice: "createServer 與 req.on", done: "知道函式何時被呼叫" },
+      { day: "9-10", focus: "非同步", read: "第 7 課、Node 第 1 堂", practice: "fs/promises + try/catch", done: "能讀檔並處理 ENOENT" },
+      { day: "11-12", focus: "CRUD 變形", read: "Todolist API 實戰", practice: "todos -> members", done: "能改出新資源" },
+      { day: "13-14", focus: "不看答案整合", read: "卡點庫", practice: "自己寫一段 GET + POST", done: "能描述卡點與修正方式" }
+    ]
+  }
+];
+
+const STUCK_POINTS = [
+  {
+    symptom: "我不知道為什麼要寫 req.url / req.method",
+    cause: "你還沒有把 req 當成一張請求資料卡來看。",
+    concept: "物件屬性讀取 + Request / Response",
+    drill: "把 const req = { url: '/todos', method: 'POST' } 的兩個值讀出來。",
+    course: "第 1 課物件、第 4 課路由判斷"
+  },
+  {
+    symptom: "我不知道為什麼要 JSON.parse(body)",
+    cause: "HTTP 傳進來的是字串，不是可以直接 .title 的 JS 物件。",
+    concept: "JSON 字串與物件互轉",
+    drill: "把 '{\"name\":\"Wayne\"}' parse 成物件，再讀出 name。",
+    course: "第 5 課 JSON、POST body 與新增流程"
+  },
+  {
+    symptom: "我看得懂 POST todo，但自己想不到要這樣寫",
+    cause: "你在背完整答案，還沒有先拆成收資料、拆資料、驗證、存資料、回資料。",
+    concept: "需求拆步驟 + 程式套路",
+    drill: "只寫中文步驟，不寫 code：POST /members 要做哪 6 步？",
+    course: "寫法生成訓練、Todolist API 實戰"
+  },
+  {
+    symptom: "我不確定 callback 裡的程式什麼時候跑",
+    cause: "你把函式定義和函式被呼叫混在一起。",
+    concept: "函式 + callback + 事件",
+    drill: "標出 req.on('data') 與 req.on('end') 哪個先被觸發、各自做什麼。",
+    course: "第 3 課函式 callback、第 7 課非同步"
+  },
+  {
+    symptom: "我不知道什麼時候該用 if / else if",
+    cause: "你還沒有先問自己：這裡是不是有多種情況要分流？",
+    concept: "條件判斷與路由表",
+    drill: "列出 GET /todos、POST /todos、其他 404 三種情況。",
+    course: "第 4 課條件判斷、Todolist API 實戰"
+  },
+  {
+    symptom: "我看到 findIndex / splice 會混亂",
+    cause: "刪一筆和改一筆都要先找到位置，但你還沒把 id -> index 的流程獨立出來。",
+    concept: "陣列搜尋與指定位置操作",
+    drill: "用 id 找出 index，再說出 index === -1 代表什麼。",
+    course: "Todolist API 實戰、陣列方法"
+  },
+  {
+    symptom: "我看到 CORS / OPTIONS 以為 Node 壞掉",
+    cause: "那是瀏覽器安全規則，不是你的主要 API 邏輯。",
+    concept: "CORS 與 preflight",
+    drill: "用一句話說明 OPTIONS 是瀏覽器先問可不可以送。",
+    course: "Todolist API 實戰"
+  }
+];
+
+const PATTERN_DRILLS = [
+  {
+    title: "新增一筆 todo",
+    requirement: "前端送 title，後端新增一筆 todo 並回傳清單。",
+    problemType: "外部資料進入伺服器",
+    input: "request body 字串",
+    output: "更新後的 todos JSON",
+    steps: ["收 body", "等待 end", "JSON.parse", "讀 title", "建立 todo 物件", "push 進 todos", "JSON.stringify 回傳"],
+    guidedCode: "let body = '';\nreq.on('data', chunk => { body += chunk; });\nreq.on('end', () => {\n  const data = JSON.parse(body);\n  const todo = { title: data.title, id: uuidv4() };\n  todos.push(todo);\n  res.end(JSON.stringify({ status: 'success', data: todos }));\n});",
+    variation: "把 todos/title 改成 members/name：建立 { name: data.name, id: uuidv4() }，push 進 members。",
+    blankPrompt: "只看中文步驟，自己補出 JSON.parse、push、JSON.stringify 三行。"
+  },
+  {
+    title: "查全部 todos",
+    requirement: "前端要取得目前全部待辦。",
+    problemType: "回傳目前記憶體資料",
+    input: "GET /todos",
+    output: "todos JSON",
+    steps: ["判斷 url 和 method", "設定 200", "把 todos stringify", "結束 response"],
+    guidedCode: "if (req.url === '/todos' && req.method === 'GET') {\n  res.writeHead(200, headers);\n  res.end(JSON.stringify({ status: 'success', data: todos }));\n}",
+    variation: "把 /todos 改成 /members，回傳 members。",
+    blankPrompt: "自己寫出 if 條件：url 必須是什麼？method 必須是什麼？"
+  },
+  {
+    title: "刪除一筆 todo",
+    requirement: "前端帶 id，後端刪除指定 todo。",
+    problemType: "從陣列中找到一筆並移除",
+    input: "DELETE /todos/:id",
+    output: "刪除後的 todos JSON 或 404",
+    steps: ["從網址切出 id", "findIndex 找位置", "判斷 index 是否為 -1", "splice 刪除", "回傳結果"],
+    guidedCode: "const id = req.url.split('/')[2];\nconst index = todos.findIndex(todo => todo.id === id);\nif (index !== -1) {\n  todos.splice(index, 1);\n  res.end(JSON.stringify({ status: 'success', data: todos }));\n} else {\n  res.writeHead(404, headers);\n  res.end(JSON.stringify({ status: 'false', message: '找不到這筆' }));\n}",
+    variation: "把 todo.id 改成 member.id，刪除 members 裡指定成員。",
+    blankPrompt: "先不要寫 splice，先自己寫出 id 與 index 兩行。"
+  },
+  {
+    title: "讀取 JSON 檔案",
+    requirement: "從檔案讀出資料，檔案不存在時回傳空陣列。",
+    problemType: "需要等待的 I/O",
+    input: "filePath",
+    output: "解析後的陣列",
+    steps: ["require fs/promises", "async function", "await readFile", "JSON.parse", "catch ENOENT 回空陣列"],
+    guidedCode: "const fs = require('fs/promises');\n\nasync function readItems(filePath) {\n  try {\n    const text = await fs.readFile(filePath, 'utf-8');\n    return JSON.parse(text);\n  } catch (error) {\n    if (error.code === 'ENOENT') return [];\n    throw error;\n  }\n}",
+    variation: "把 readItems 改成 readMembers，讀 members.json。",
+    blankPrompt: "自己補出 async、await、try/catch 的位置。"
+  }
+];
+
 const TASKS = [
   {
     day:"Day 1", title:"模組化概念、fs/promises",
@@ -505,7 +709,12 @@ const THINK = [
 
 const KEY = "hex-js2node-v1";
 let state = load();
-let active = state.active ?? 0;
+if (state.uiVersion !== 2) {
+  state.uiVersion = 2;
+  state.active = 'rescue';
+  save();
+}
+let active = state.active ?? 'rescue';
 
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {done:{}}; }catch(e){ return {done:{}}; } }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
@@ -513,6 +722,7 @@ function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/
 
 const tabsEl = document.getElementById("tabs");
 const panelEl = document.getElementById("panel");
+const mobileNavEl = document.getElementById("mobileNav");
 
 function makeGroup(labelText){
   const g = document.createElement("div"); g.className = "navgroup";
@@ -532,7 +742,12 @@ function makeTab(into, html, isActive, onClick, extraClass){
 function renderTabs(){
   tabsEl.innerHTML = "";
 
-  // 影音課程：7 課觀念 + Todolist API 實戰
+  const g0 = makeGroup("學習路線");
+  makeTab(g0, '<span class="dot"></span><span class="n"></span><span>救進度</span>', active==='rescue',
+    ()=>{ active='rescue'; state.active='rescue'; save(); render(); });
+  makeTab(g0, '<span class="dot"></span><span class="n"></span><span>進度</span>', active==='progress',
+    ()=>{ active='progress'; state.active='progress'; save(); render(); });
+
   const g1 = makeGroup("影音課程");
   LESSONS.forEach((s,i)=>{
     makeTab(g1, '<span class="dot"></span><span class="n">'+(i+1)+'</span><span>'+s.js+'</span>',
@@ -541,21 +756,121 @@ function renderTabs(){
   makeTab(g1, '<span class="dot"></span><span class="n"></span><span>Todolist API 實戰</span>', active==='api',
     ()=>{ active='api'; state.active='api'; save(); render(); });
 
-  // 觀念複習（思考導向）
-  const g2 = makeGroup("觀念複習");
+  const g2 = makeGroup("新手支援");
+  makeTab(g2, '<span class="dot"></span><span class="n"></span><span>卡點庫</span>', active==='stuck',
+    ()=>{ active='stuck'; state.active='stuck'; save(); render(); });
+  makeTab(g2, '<span class="dot"></span><span class="n"></span><span>寫法生成</span>', active==='patterns',
+    ()=>{ active='patterns'; state.active='patterns'; save(); render(); });
   makeTab(g2, '<span class="dot"></span><span class="n"></span><span>問題 → 用什麼</span>', active==='think',
     ()=>{ active='think'; state.active='think'; save(); render(); });
 
-  // 每日任務
   const g3 = makeGroup("每日任務");
   makeTab(g3, '<span class="dot"></span><span class="n"></span><span>Day 1 · 模組 / fs</span>', active==='tasks',
     ()=>{ active='tasks'; state.active='tasks'; save(); render(); });
+}
+
+function renderMobileNav(){
+  if(!mobileNavEl) return;
+  const items = [
+    { id:'rescue', label:'救進度' },
+    { id:0, label:'課程' },
+    { id:'stuck', label:'卡點' },
+    { id:'patterns', label:'練習' },
+    { id:'progress', label:'進度' }
+  ];
+  mobileNavEl.innerHTML = items.map(item =>
+    '<button class="'+(active===item.id || (item.id===0 && typeof active === 'number') ? 'active' : '')+'" data-view="'+item.id+'">'+item.label+'</button>'
+  ).join('');
+  mobileNavEl.querySelectorAll('button').forEach(btn => {
+    btn.onclick = () => {
+      const view = btn.dataset.view === '0' ? 0 : btn.dataset.view;
+      active = view;
+      state.active = view;
+      save();
+      render();
+    };
+  });
 }
 
 function codeBlock(b){
   let h = '<div class="blklabel">'+b.label+'</div><pre><code>'+esc(b.code)+'</code></pre>';
   if(b.note) h += '<p class="codenote">'+b.note+'</p>';
   return h;
+}
+
+function listItems(items) {
+  return '<ul class="simple-list">' + items.map(item => '<li>' + item + '</li>').join('') + '</ul>';
+}
+
+function viewTitle(title, subtitle) {
+  return '<div class="ttl-row"><h2>' + title + '</h2></div>' +
+    (subtitle ? '<p class="maps">' + subtitle + '</p>' : '');
+}
+
+function renderRescue() {
+  let h = viewTitle('落後救援路線', '不用重看全部影片。先補最會讓 Node.js 卡住的底層觀念，再回到 Todolist API。');
+  RESCUE_PLANS.forEach(plan => {
+    h += '<div class="learn-card">';
+    h += '<div class="card-kicker">' + plan.fit + '</div>';
+    h += '<h3>' + plan.title + '</h3>';
+    plan.days.forEach(day => {
+      h += '<div class="step-card">';
+      h += '<b>' + day.day + '｜' + day.focus + '</b>';
+      h += '<p><span>讀：</span>' + day.read + '</p>';
+      h += '<p><span>練：</span>' + day.practice + '</p>';
+      h += '<p><span>完成：</span>' + day.done + '</p>';
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+  panelEl.innerHTML = h;
+}
+
+function renderStuckPoints() {
+  let h = viewTitle('新手卡點庫', '先找到你卡在哪，再補對觀念。每個卡點都給一題立刻能練的小題。');
+  STUCK_POINTS.forEach(point => {
+    h += '<div class="learn-card">';
+    h += '<h3>' + point.symptom + '</h3>';
+    h += '<p><b>真正原因：</b>' + point.cause + '</p>';
+    h += '<p><b>要補觀念：</b>' + point.concept + '</p>';
+    h += '<p><b>立刻練一題：</b>' + point.drill + '</p>';
+    h += '<p class="codenote">出現位置：' + point.course + '</p>';
+    h += '</div>';
+  });
+  panelEl.innerHTML = h;
+}
+
+function renderPatterns() {
+  let h = viewTitle('中文需求 → 寫法生成訓練', '目標不是背影片答案，而是看到需求時能拆出資料、條件、流程和該用的語法。');
+  PATTERN_DRILLS.forEach(drill => {
+    h += '<div class="learn-card pattern-card">';
+    h += '<div class="card-kicker">' + drill.problemType + '</div>';
+    h += '<h3>' + drill.title + '</h3>';
+    h += '<p><b>需求：</b>' + drill.requirement + '</p>';
+    h += '<p><b>輸入：</b>' + drill.input + '</p>';
+    h += '<p><b>輸出：</b>' + drill.output + '</p>';
+    h += '<div class="blklabel">腦中先跑這些步驟</div>';
+    h += listItems(drill.steps);
+    h += '<div class="blklabel">引導版</div>';
+    h += '<pre><code>' + esc(drill.guidedCode) + '</code></pre>';
+    h += '<p class="key"><b>變形題：</b>' + drill.variation + '</p>';
+    h += '<p class="obs"><b>空格練習</b> — ' + drill.blankPrompt + '</p>';
+    h += '</div>';
+  });
+  panelEl.innerHTML = h;
+}
+
+function renderProgressView() {
+  const lessonDone = Object.values(state.done || {}).filter(Boolean).length;
+  const taskDone = Object.values(state.taskDone || {}).filter(Boolean).length;
+  let h = viewTitle('學習進度', '這裡只看最重要的：你補了哪些底層觀念、接下來該做哪一題。');
+  h += '<div class="learn-card">';
+  h += '<h3>目前狀態</h3>';
+  h += '<p>觀念課完成：<b>' + lessonDone + ' / ' + LESSONS.length + '</b></p>';
+  h += '<p>每日任務完成：<b>' + taskDone + ' / ' + TASKS.length + '</b></p>';
+  h += '<p class="key">下一步建議：如果還無法自己想到 POST 寫法，先做「新增一筆 todo」的寫法生成訓練，再回去看影片 code。</p>';
+  h += '</div>';
+  panelEl.innerHTML = h;
 }
 
 function renderApiCourse(){
@@ -613,6 +928,10 @@ function renderTasks(){
 }
 
 function renderPanel(){
+  if(active === 'rescue'){ renderRescue(); return; }
+  if(active === 'stuck'){ renderStuckPoints(); return; }
+  if(active === 'patterns'){ renderPatterns(); return; }
+  if(active === 'progress'){ renderProgressView(); return; }
   if(active === 'tasks'){ renderTasks(); return; }
   if(active === 'api'){ renderApiCourse(); return; }
   if(active === 'think'){ renderThink(); return; }
@@ -680,9 +999,9 @@ function renderProgress(){
   document.getElementById("count").textContent = "學完 "+n+" / "+LESSONS.length;
 }
 
-function render(){ renderTabs(); renderPanel(); renderProgress(); window.scrollTo({top:0,behavior:"smooth"}); }
+function render(){ renderTabs(); renderMobileNav(); renderPanel(); renderProgress(); window.scrollTo({top:0,behavior:"smooth"}); }
 
-document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}}; active=0; save(); render(); } };
+document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}, uiVersion:2, active:'rescue'}; active='rescue'; save(); render(); } };
 
 render();
 </script>
