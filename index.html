@@ -661,6 +661,31 @@ const TASKS = [
       {label:'fileManager.js', code:'const fs = require("fs/promises");\n\nasync function saveData(fileName, content) {\n  try {\n    await fs.writeFile(fileName, content);\n    console.log("寫入成功：" + fileName);\n  } catch (err) {\n    console.log("寫入失敗：", err);\n  }\n}\n\nasync function loadData(fileName) {\n  try {\n    const data = await fs.readFile(fileName, "utf-8");\n    return data;\n  } catch (err) {\n    console.log("讀取失敗：", err);\n  }\n}\n\nmodule.exports = { saveData, loadData };'},
       {label:'app.js', code:'const { saveData, loadData } = require("./fileManager.js");\n\nasync function main() {\n  await saveData("user.txt", "Hello Node.js!");   // ① 先寫入（await 等它寫完）\n  const content = await loadData("user.txt");      // ② 寫完才讀\n  console.log("檔案內容：", content);              // ③ Hello Node.js!\n}\n\nmain();'}
     ]
+  },
+  {
+    day:"Day 2", title:"單一職責原則（一個函式只做一件事）",
+    uses:'用到 → <b>第 3 課</b> 函式 ｜ <b>第 2 課</b> 拆功能（模組化）',
+    concept:'<b>單一職責原則（SRP）＝ 一個函式只做「一件事」。</b><br><br>一間店不要請「一個人」同時當廚師＋收銀＋清潔工 —— 太亂，而且改一個流程就要重教他全部。應該「<b>一人一職</b>」：廚師只煮、收銀只收錢。<br><br>程式也一樣：一個函式如果同時做「檢查＋寫檔＋記 log」，哪天要改其中一項就得動整段，很容易「<b>改 A 壞 B</b>」。<br><br><b>做法：</b>拆成「各管一件事的小函式（專家）」，主流程只負責「<b>叫各專家做事</b>」，自己不碰細節。',
+    demo:[
+      {label:'反面教材：一個函式做三件事（難維護）', code:'async function registerUser(userData) {\n  // 1. 檢查格式\n  if (!userData.email.includes("@")) return;\n  // 2. 寫檔\n  await fs.writeFile("./users.json", JSON.stringify(userData));\n  // 3. 記 log\n  await fs.appendFile("./activity.log", "註冊成功");\n}',
+       note:'三件事混在一起 → 改一個就要動整段，容易改 A 壞 B。'},
+      {label:'優化：拆成「各管一件事的專家」', code:'function validateEmail(email) {        // 只驗證\n  return email.includes("@");\n}\nasync function saveUserData(u) {        // 只存\n  await fs.writeFile("./users.json", JSON.stringify(u));\n}\nasync function logActivity(msg) {       // 只記 log\n  await fs.appendFile("./activity.log", msg);\n}\n\nasync function registerUser(userData) {   // 主流程：只「指揮」\n  if (!validateEmail(userData.email)) return;\n  await saveUserData(userData);\n  await logActivity("註冊成功");\n}',
+       note:'每個函式只做一件事；改 email 廠商只動 logActivity，互不影響。'}
+    ],
+    intro:'換你練：把「價格驗證 ＋ 寫 log」混在一起的 createOrder，拆成各管一件事的小函式。',
+    reqs:[
+      '抽出 <code>isValidPrice(price)</code>：只檢查金額 &gt; 0，回傳 true / false',
+      '抽出 <code>writeOrderLog(id, price)</code>（async）：只負責寫檔，內含 try / catch',
+      '重構 <code>createOrder(orderData)</code>：自己不做細節，只「呼叫上面兩個函式」'
+    ],
+    hints:[
+      '驗證函式只回傳布林（true / false），不做別的事',
+      '寫檔函式用 fs/promises + await + try / catch',
+      '主流程像「指揮官」：先驗證，過了才寫檔'
+    ],
+    solution:[
+      {label:'app.js（拆分後）', code:'const fs = require("fs/promises");\n\n// 職責一：只驗證價格\nfunction isValidPrice(price) {\n  return price > 0;\n}\n\n// 職責二：只負責寫檔\nasync function writeOrderLog(id, price) {\n  try {\n    const logContent = `訂單編號: ${id}, 金額: ${price}`;\n    await fs.writeFile(`./order-${id}.txt`, logContent);\n    console.log(`[成功] 訂單 ${id} 建立完成`);\n  } catch (err) {\n    console.error(`[錯誤] 寫檔失敗: ${err.message}`);\n  }\n}\n\n// 主流程：只指揮，不碰細節\nasync function createOrder(orderData) {\n  if (!isValidPrice(orderData.price)) {\n    console.error("訂單失敗：金額不可小於等於 0");\n    return;\n  }\n  await writeOrderLog(orderData.id, orderData.price);\n}\n\ncreateOrder({ id: "A001", price: 500 });   // 正常\ncreateOrder({ id: "A002", price: -20 });   // 被驗證攔截，不產生檔案'}
+    ]
   }
 ];
 
@@ -765,7 +790,7 @@ function renderTabs(){
     ()=>{ active='think'; state.active='think'; save(); render(); });
 
   const g3 = makeGroup("每日任務");
-  makeTab(g3, '<span class="dot"></span><span class="n"></span><span>Day 1 · 模組 / fs</span>', active==='tasks',
+  makeTab(g3, '<span class="dot"></span><span class="n"></span><span>打卡任務（Day 1 起）</span>', active==='tasks',
     ()=>{ active='tasks'; state.active='tasks'; save(); render(); });
 }
 
@@ -910,6 +935,8 @@ function renderTasks(){
   TASKS.forEach((t, ti)=>{
     h += '<div class="partlabel">'+t.day+' — '+t.title+'</div>';
     h += '<p class="obs">'+t.uses+'</p>';
+    if(t.concept){ h += '<div class="concept" style="margin:12px 0">'+t.concept+'</div>'; }
+    if(t.demo){ t.demo.forEach(d=>{ h += codeBlock(d); }); }
     h += '<p class="p2intro">'+t.intro+'</p>';
     h += '<div class="blklabel">題目要求</div><ul style="margin:0;padding-left:20px">'+t.reqs.map(r=>'<li style="margin:8px 0;font-size:15px;line-height:1.6">'+r+'</li>').join('')+'</ul>';
     h += '<div class="blklabel" style="margin-top:16px">提示</div><ul style="margin:0;padding-left:20px">'+t.hints.map(r=>'<li style="margin:6px 0;font-size:14px;color:var(--muted)">'+r+'</li>').join('')+'</ul>';
