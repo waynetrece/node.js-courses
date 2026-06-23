@@ -114,6 +114,12 @@
   button.mark.is-done{background:var(--ok-soft); color:var(--ok); border-color:var(--ok);}
   .tip{margin-top:26px; font-size:13.5px; color:var(--muted); text-align:center;}
   .reset{background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer; text-decoration:underline; font-family:inherit;}
+  .related{margin-top:30px; padding:15px 17px; background:var(--indigo-soft); border-radius:12px;}
+  .rel-label{font-size:11px; font-weight:700; color:var(--indigo); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .rel-desc{font-size:14px; color:var(--ink); margin:0 0 10px;}
+  .rel-btn{display:block; width:100%; text-align:left; margin:6px 0 0; padding:10px 13px; font-size:14px; font-weight:500;
+    border:1px solid var(--indigo); background:var(--card); color:var(--indigo); border-radius:8px; cursor:pointer; font-family:inherit; transition:.12s;}
+  .rel-btn:hover{background:var(--indigo-soft);}
   .mobile-nav{position:fixed; left:0; right:0; bottom:0; z-index:30; grid-template-columns:repeat(5,1fr);
     gap:2px; padding:8px 8px calc(8px + env(safe-area-inset-bottom)); background:var(--card);
     border-top:1px solid var(--line); box-shadow:0 -6px 18px rgba(0,0,0,.08);}
@@ -732,6 +738,12 @@ const THINK = [
    js:'JSON.stringify(物件)  // 物件 → 字串\nJSON.parse(字串)      // 字串 → 物件', node:'回傳前 stringify；收 body 後 parse'}
 ];
 
+const RELATED = {
+  1: [{day:'Day 1', desc:'模組化、fs/promises'}, {day:'Day 2', desc:'單一職責原則（拆功能）'}],
+  2: [{day:'Day 2', desc:'單一職責原則（函式只做一件事）'}],
+  6: [{day:'Day 1', desc:'fs/promises 讀寫檔'}]
+};
+
 const KEY = "hex-js2node-v1";
 let state = load();
 if (state.uiVersion !== 2) {
@@ -996,11 +1008,22 @@ function renderPanel(){
     h += '<p class="ans">'+q.ans+'</p></div>';
   });
 
+  if(RELATED[active]){
+    h += '<div class="related"><div class="rel-label">相關每日任務</div>';
+    h += '<p class="rel-desc">看完這課觀念，到「每日任務」實際練一次：</p>';
+    RELATED[active].forEach(r=>{ h += '<button class="rel-btn" data-gotask="1">'+r.day+' · '+r.desc+' →</button>'; });
+    h += '</div>';
+  }
+
   const done = !!state.done[active];
   h += '<div class="foot"><button class="mark '+(done?'is-done':'')+'" id="markBtn">'+(done?' 這課學完了（點可取消）':'我學完這課了')+'</button>'
      + '<div class="nav-btns"><button class="ghost" id="prev" '+(active===0?'disabled':'')+'>← 上一課</button>'
      + '<button class="ghost" id="next" '+(active===LESSONS.length-1?'disabled':'')+'>下一課 →</button></div></div>';
   panelEl.innerHTML = h;
+
+  panelEl.querySelectorAll('[data-gotask]').forEach(b=>{
+    b.onclick = ()=>{ active='tasks'; state.active='tasks'; save(); render(); };
+  });
 
   panelEl.querySelectorAll(".q").forEach(q=>{
     const opts = q.querySelectorAll(".opt");
