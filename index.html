@@ -684,6 +684,32 @@ const TASKS = [
     solution:[
       {label:'app.js（拆分後）', code:'const fs = require("fs/promises");\n\n// 職責一：只驗證價格\nfunction isValidPrice(price) {\n  return price > 0;\n}\n\n// 職責二：只負責寫檔\nasync function writeOrderLog(id, price) {\n  try {\n    const logContent = `訂單編號: ${id}, 金額: ${price}`;\n    await fs.writeFile(`./order-${id}.txt`, logContent);\n    console.log(`[成功] 訂單 ${id} 建立完成`);\n  } catch (err) {\n    console.error(`[錯誤] 寫檔失敗: ${err.message}`);\n  }\n}\n\n// 主流程：只指揮，不碰細節\nasync function createOrder(orderData) {\n  if (!isValidPrice(orderData.price)) {\n    console.error("訂單失敗：金額不可小於等於 0");\n    return;\n  }\n  await writeOrderLog(orderData.id, orderData.price);\n}\n\ncreateOrder({ id: "A001", price: 500 });   // 正常\ncreateOrder({ id: "A002", price: -20 });   // 被驗證攔截，不產生檔案'}
     ]
+  },
+  {
+    day:"Day 3", title:"環境變數（process.env / .env / dotenv）",
+    uses:'用到 → <b>第 2 課</b> require ｜ <b>直播第 1 堂</b> process.env ｜ <b>第 4 課</b> || 預設值',
+    concept:'<b>環境變數 ＝ 把「會隨環境改變的設定」和「機密（API key、密碼）」抽離出程式碼，放到 .env 檔。</b><br><br>為什麼？開發機 / 正式機的設定常不同；機密更不能寫死在 code（會被看光、推上 GitHub 被盜）。<br><br>・<code>process.env</code>：Node 讀「環境變數」的地方。<br>・<code>.env</code>：純文字檔（<code>KEY=VALUE</code>），放設定 / 機密。<b>絕對不能上 GitHub</b>（用 .gitignore 排除）。<br>・<code>dotenv</code>：套件，程式啟動時自動把 .env 讀進 <code>process.env</code>。<br><br><b>兩個必記：</b>① .env 取出來「<b>一律是字串</b>」→ 要算數學先 <code>Number()</code> 轉型。② 怕變數沒設到 → 用 <code>||</code> 給預設值。',
+    demo:[
+      {label:'.env（純文字檔，放設定／機密，不上 GitHub）', code:'MAX_FILE_SIZE_MB=10\nUPLOAD_DIR=./local_uploads\nGYM_NAME=六角無限健身房',
+       note:'格式：KEY=VALUE，一行一個。'},
+      {label:'app.js：用 dotenv 讀 .env', code:'const dotenv = require("dotenv");\ndotenv.config();   // 把 .env 讀進 process.env（放最前面）\n\nconst name = process.env.GYM_NAME || "未命名健身房";    // || 給預設值\nconst size = Number(process.env.MAX_FILE_SIZE_MB) || 5;  // 字串 → 數字',
+       note:'process.env.X 拿到的都是字串；要算數學先 Number() 轉。沒設到就用 || 的預設值。'}
+    ],
+    intro:'換你練：寫 getUploadConfig()，從 .env 讀三個設定，各給預設值。',
+    reqs:[
+      '建 <code>.env</code>：<code>MAX_FILE_SIZE_MB=10</code>、<code>UPLOAD_DIR=./local_uploads</code>、<code>GYM_NAME=六角無限健身房</code>',
+      '<code>app.js</code>：<code>dotenv.config()</code> 後寫 <code>getUploadConfig()</code>，回傳 <code>{ uploadDir, maxFileSize, gymName }</code>',
+      '預設值：uploadDir → <code>"/tmp"</code>、maxFileSize → <code>5</code>（記得 <code>Number()</code> 轉）、gymName → <code>"未命名健身房"</code>'
+    ],
+    hints:[
+      '.env 取出來是字串，maxFileSize 要用 Number() 轉成數字',
+      '用 || 給預設值：process.env.X || 預設',
+      'dotenv.config() 要放最前面，不然讀不到'
+    ],
+    solution:[
+      {label:'.env', code:'MAX_FILE_SIZE_MB=10\nUPLOAD_DIR=./local_uploads\nGYM_NAME=六角無限健身房'},
+      {label:'app.js', code:'const dotenv = require("dotenv");\ndotenv.config();\n\nfunction getUploadConfig() {\n  const mbSize = Number(process.env.MAX_FILE_SIZE_MB) || 5;   // 字串轉數字\n  return {\n    uploadDir: process.env.UPLOAD_DIR || "/tmp",\n    maxFileSize: mbSize,\n    gymName: process.env.GYM_NAME || "未命名健身房",\n  };\n}\n\nconsole.log("--- 健身房上傳配置測試 ---");\nconsole.log(getUploadConfig());'}
+    ]
   }
 ];
 
