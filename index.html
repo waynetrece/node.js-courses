@@ -710,6 +710,121 @@ const TASKS = [
       {label:'.env', code:'MAX_FILE_SIZE_MB=10\nUPLOAD_DIR=./local_uploads\nGYM_NAME=六角無限健身房'},
       {label:'app.js', code:'const dotenv = require("dotenv");\ndotenv.config();\n\nfunction getUploadConfig() {\n  const mbSize = Number(process.env.MAX_FILE_SIZE_MB) || 5;   // 字串轉數字\n  return {\n    uploadDir: process.env.UPLOAD_DIR || "/tmp",\n    maxFileSize: mbSize,\n    gymName: process.env.GYM_NAME || "未命名健身房",\n  };\n}\n\nconsole.log("--- 健身房上傳配置測試 ---");\nconsole.log(getUploadConfig());'}
     ]
+  },
+  {
+    day:"Day 4", title:"Node.js 內建 http 模組（createServer）",
+    uses:'用到 → <b>第 1 課</b> createServer / req / res ｜ <b>Day 3</b> 用 .env 讀 PORT',
+    concept:'<b>http 模組讓 Node 開一台伺服器，一直開著等人連進來。</b>三步驟：<br>① <code>http.createServer(callback)</code> 開店 → ② callback 處理 <code>req</code>（對方請求）/ <code>res</code>（你的回應）→ ③ <code>server.listen(PORT)</code> 開門營業。<br><br>這你在第 1 課 / Todolist 已碰過，Day 4 專門練「開一台最小伺服器」，並用 Day 3 的 <code>.env</code> 讀 PORT。',
+    demo:[
+      {label:'最小的一台伺服器', code:'const http = require("http");\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });\n  res.end("<h1>哈囉！你成功連線到伺服器了</h1>");\n});\n\nserver.listen(3000, () => {\n  console.log("伺服器啟動：http://localhost:3000");\n});',
+       note:'res.writeHead 設狀態+標頭、res.end 送出並結束。'}
+    ],
+    intro:'換你練：用 .env 的 PORT 開一台伺服器，回一段 HTML。',
+    reqs:[
+      '建 <code>.env</code>：<code>PORT=4000</code>',
+      '<code>app.js</code>：引入 dotenv、http；用 <code>process.env.PORT || 3000</code> 讀 PORT',
+      '回應：狀態 200、<code>Content-Type: text/html; charset=utf-8</code>、內容 <code>"&lt;h2&gt;歡迎來到我的第一個 Node.js 網站！&lt;/h2&gt;"</code>'
+    ],
+    hints:[
+      'dotenv.config() 要放最前面才讀得到 .env',
+      'process.env.PORT 是字串，listen 可以直接吃；沒設到就用 || 3000',
+      '每個請求都要 res.end()，否則瀏覽器一直轉'
+    ],
+    solution:[
+      {label:'.env', code:'PORT=4000'},
+      {label:'app.js', code:'const dotenv = require("dotenv");\ndotenv.config();\nconst http = require("http");\n\nconst PORT = process.env.PORT || 3000;\n\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });\n  res.write("<h2>歡迎來到我的第一個 Node.js 網站！</h2>");\n  res.end();\n});\n\nserver.listen(PORT, () => {\n  console.log("伺服器運行中：http://localhost:" + PORT);\n});'}
+    ]
+  },
+  {
+    day:"Day 5", title:"檔案上傳（formidable）",
+    uses:'用到 → <b>第 1 課</b> 物件 ｜ <b>第 6 課</b> 陣列 [0] ｜ <b>第 2 課</b> require',
+    concept:'<b>瀏覽器上傳檔案用 <code>multipart/form-data</code> 格式，Node 原生不會解析，要用 <code>formidable</code> 套件。</b><br><br>重點：formidable v3 把上傳的檔案統一放在<b>陣列</b>裡，所以要用 <code>files.欄位名稱[0]</code> 取第一個。每個檔案物件有 <code>originalFilename</code>（原檔名）、<code>filepath</code>（暫存路徑）、<code>size</code>。<br><br>小技巧：<code>?.</code>（可選串連）—— <code>files.report?.[0]</code> 在沒檔案時不會報錯，會給 undefined。',
+    demo:[
+      {label:'取出上傳的檔案（用 [0]）', code:'const files = {\n  avatar: [{ originalFilename: "profile.png", filepath: "/tmp/upload_123" }]\n};\n\nconst userAvatar = files.avatar?.[0];   // 取陣列第一個檔案\nif (userAvatar) {\n  console.log("收到圖片：" + userAvatar.originalFilename);\n  console.log("暫存位置：" + userAvatar.filepath);\n}',
+       note:'files.欄位[0] 取第一個檔案；?. 避免沒檔案時報錯。'}
+    ],
+    intro:'換你練：補完 parseMemberFile(files)，從 files.report 取第一個檔案，印出檔名與路徑。',
+    reqs:[
+      '從 <code>files.report</code> 陣列取第一個檔案（用 <code>?.[0]</code>）',
+      '若沒檔案 → 印錯誤訊息並 return',
+      '有檔案 → 印出 <code>originalFilename</code> 與 <code>filepath</code>'
+    ],
+    hints:[
+      '用 files.report?.[0] 取第一個，避免沒檔案時報錯',
+      '先檢查 if (!reportFile) 擋掉沒檔案的情況',
+      '檔案物件的屬性：originalFilename、filepath'
+    ],
+    solution:[
+      {label:'app.js', code:'function parseMemberFile(files) {\n  const reportFile = files.report?.[0];   // 取第一個檔案\n  if (!reportFile) {\n    console.log("找不到上傳的報告檔案");\n    return;\n  }\n  console.log("檔案名稱：" + reportFile.originalFilename);\n  console.log("暫存路徑：" + reportFile.filepath);\n}\n\nconst incomingFiles = {\n  report: [{ originalFilename: "health-report.pdf", filepath: "/tmp/file-9999" }]\n};\nparseMemberFile(incomingFiles);'}
+    ]
+  },
+  {
+    day:"Day 6", title:"路由設計（req.method + req.url）",
+    uses:'用到 → <b>第 4 課</b> if 判斷 ｜ <b>第 1 課</b> req / res ｜ <b>Day 4</b> http',
+    concept:'<b>後端依「方法 + 路徑」回不同東西，這叫路由。</b>用 <code>if</code> 判斷 <code>req.method</code> 和 <code>req.url</code>，決定走哪條路。<br><br>三個重點：① 每個分支結尾記得 <code>res.end()</code>（不然瀏覽器一直轉）；② 配對到就 <code>return</code>，不要繼續往下；③ 最後接一個 <b>404</b>，處理所有沒匹配的路徑（避免崩潰）。<br><br>這跟 Todolist 的路由同概念，Day 6 用原生 http 練一次。',
+    demo:[
+      {label:'最基本的路由', code:'const http = require("http");\n\nconst server = http.createServer((req, res) => {\n  if (req.method === "GET" && req.url === "/") {\n    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });\n    res.end("<h1>Welcome</h1>");\n    return;   // 配對到就 return\n  }\n  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });\n  res.end("Not Found");\n});\n\nserver.listen(3000);',
+       note:'每個分支都要 res.end()；最後一定接 404。'}
+    ],
+    intro:'換你練：設計 3 條路由。',
+    reqs:[
+      '<code>GET /</code> → 200，文字「歡迎來到健身房系統」',
+      '<code>GET /api/v1/packages</code> → 200，JSON <code>{"status":"success","data":"方案列表"}</code>',
+      '其他任何路徑 → 404，文字「路由不存在」'
+    ],
+    hints:[
+      '每個分支判斷 req.method 和 req.url 兩個都要對',
+      '回 JSON 要 JSON.stringify(...)',
+      '配對到就 return，最後接 404'
+    ],
+    solution:[
+      {label:'app.js', code:'const http = require("http");\n\nconst server = http.createServer((req, res) => {\n  if (req.method === "GET" && req.url === "/") {\n    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });\n    res.end("歡迎來到健身房系統");\n    return;\n  }\n  if (req.method === "GET" && req.url === "/api/v1/packages") {\n    res.writeHead(200, { "Content-Type": "application/json" });\n    res.end(JSON.stringify({ status: "success", data: "方案列表" }));\n    return;\n  }\n  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });\n  res.end("路由不存在");\n});\n\nserver.listen(3000, () => console.log("Running on 3000"));'}
+    ]
+  },
+  {
+    day:"Day 7", title:"Express 框架入門",
+    uses:'用到 → <b>Day 6</b> 路由 ｜ <b>第 1 課</b> createServer（對比）',
+    concept:'<b>Express ＝ 輕量級 Web 框架，把原生 http 那一堆 if 判斷封裝起來，寫起來短很多。</b><br><br>・<code>express()</code> 建立 app；<code>app.get(路徑, callback)</code> 設一條路由（也有 post/put/delete）。<br>・<code>res.send()</code> 送文字 / HTML（自動設標頭）；<code>res.json()</code> 送 JSON（自動 stringify）；<code>res.status()</code> 設狀態碼，可串接：<code>res.status(201).json(物件)</code>。<br>・<code>app.use()</code> 接所有沒匹配的 → 當 404。<br><br>比喻：原生 http 是「自己煮」，Express 是「叫外送平台」—— 同樣的事，幫你省掉一堆雜事。',
+    demo:[
+      {label:'Express 基本路由（對比原生超短）', code:'const express = require("express");\nconst app = express();\n\napp.get("/", (req, res) => {\n  res.send("首頁");\n});\n\napp.listen(3000, () => console.log("伺服器啟動中"));',
+       note:'res.send 自動設 Content-Type；不用自己 writeHead / end。'}
+    ],
+    intro:'換你練：用 Express 設計 3 條路由。',
+    reqs:[
+      '<code>GET /</code> → 200，歡迎訊息',
+      '<code>GET /api/v1/members</code> → 200，會員列表',
+      '其他路徑（用 <code>app.use</code>）→ 404'
+    ],
+    hints:[
+      'res.status(200).json({...}) 串接寫法',
+      'app.use((req,res)=>{...}) 放最後，接所有沒匹配的',
+      'res.json 會自動 JSON.stringify，不用自己轉'
+    ],
+    solution:[
+      {label:'app.js', code:'const express = require("express");\nconst app = express();\n\napp.get("/", (req, res) => {\n  res.status(200).json({ status: "success", message: "歡迎來到健身房 API" });\n});\n\napp.get("/api/v1/members", (req, res) => {\n  res.status(200).json({ status: "success", data: [{ name: "王小明" }, { name: "李小花" }] });\n});\n\napp.use((req, res) => {   // 所有沒匹配的 → 404\n  res.status(404).json({ status: "error", message: "路由不存在" });\n});\n\napp.listen(3000, () => console.log("http://localhost:3000"));'}
+    ]
+  },
+  {
+    day:"Day 8", title:"動態路由 req.params 與 req.query",
+    uses:'用到 → <b>Day 7</b> Express ｜ Todolist <code>/:id</code>',
+    concept:'<b>怎麼處理「網址裡的動態值」和「查詢條件」。</b><br><br>・<code>req.params</code>：從路徑拿「<b>動態值</b>」。路由寫 <code>/members/:id</code>，連 <code>/members/5</code> 進來 → <code>req.params.id</code> 是 "5"。（就像 Todolist 的 <code>/todos/:id</code>）<br>・<code>req.query</code>：從「<b>查詢字串</b>」拿篩選條件。網址 <code>/members?role=vip&limit=10</code> → <code>req.query.role</code> 是 "vip"。<br><br><b>RESTful 精神：</b>網址表示「資源（名詞）」、HTTP 方法表示「動作（動詞）」。例如 GET /members（查全部）、GET /members/:id（查一筆）、POST /members（新增）、DELETE /members/:id（刪一筆）。',
+    demo:[
+      {label:'req.params（路徑）vs req.query（查詢字串）', code:'// 路徑動態值：/members/5 → id = "5"\napp.get("/members/:id", (req, res) => {\n  const memberId = req.params.id;\n  res.status(200).json({ status: "success", data: { id: memberId } });\n});\n\n// 查詢字串：/members?role=vip&limit=10\napp.get("/members", (req, res) => {\n  const { role, limit } = req.query;\n  res.status(200).json({ status: "success", filter: { role, limit } });\n});',
+       note:'冒號 :id 是路徑參數（params）；問號後面的是查詢字串（query）。'}
+    ],
+    intro:'換你練：一條用 params、一條用 query。',
+    reqs:[
+      '<code>GET /coaches/:id</code> → 用 <code>req.params.id</code> 回傳 coachId',
+      '<code>GET /courses</code> → 用 <code>req.query</code> 取 type、limit 並回傳'
+    ],
+    hints:[
+      'params：路由要寫 :id，再用 req.params.id 取',
+      'query：直接 const { type, limit } = req.query 解構',
+      'params 是路徑的一部分；query 是 ? 後面的篩選條件'
+    ],
+    solution:[
+      {label:'app.js', code:'const express = require("express");\nconst app = express();\n\napp.get("/coaches/:id", (req, res) => {\n  const coachId = req.params.id;        // 從路徑拿 id\n  res.status(200).json({ status: "success", coachId });\n});\n\napp.get("/courses", (req, res) => {\n  const { type, limit } = req.query;    // 從查詢字串拿\n  res.status(200).json({ status: "success", filter: { type, limit } });\n});\n\napp.listen(3000, () => console.log("http://localhost:3000"));'}
+    ]
   }
 ];
 
