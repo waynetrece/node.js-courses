@@ -486,14 +486,6 @@ const OBS = [
   'JS：22-AJAX網路請求、23-AJAX-axios套件教學（速查表06-AJAX與非同步、打卡任務Day24）　｜　Node：01-Node.js基礎/直播第1堂'
 ];
 
-const APP_VIEWS = [
-  { id: "rescue", label: "救進度", group: "學習路線" },
-  { id: "course", label: "課程", group: "影音課程" },
-  { id: "stuck", label: "卡點", group: "新手支援" },
-  { id: "patterns", label: "練習", group: "新手支援" },
-  { id: "progress", label: "進度", group: "學習路線" }
-];
-
 const RESCUE_PLANS = [
   {
     title: "3 天救進度",
@@ -746,12 +738,12 @@ const RELATED = {
 
 const KEY = "hex-js2node-v1";
 let state = load();
-if (state.uiVersion !== 2) {
-  state.uiVersion = 2;
-  state.active = 'rescue';
+if (state.uiVersion !== 3) {
+  state.uiVersion = 3;
+  state.active = 0;
   save();
 }
-let active = state.active ?? 'rescue';
+let active = state.active ?? 0;
 
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {done:{}}; }catch(e){ return {done:{}}; } }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
@@ -864,7 +856,7 @@ function renderRescue() {
 }
 
 function renderStuckPoints() {
-  let h = viewTitle('新手卡點庫', '先找到你卡在哪，再補對觀念。每個卡點都給一題立刻能練的小題。');
+  let h = viewTitle('新手卡點庫', '【卡住時用】先找到你卡在哪，再補對觀念；每個卡點給一題立刻能練的小題。');
   STUCK_POINTS.forEach(point => {
     h += '<div class="learn-card">';
     h += '<h3>' + point.symptom + '</h3>';
@@ -878,7 +870,7 @@ function renderStuckPoints() {
 }
 
 function renderPatterns() {
-  let h = viewTitle('中文需求 → 寫法生成訓練', '目標不是背影片答案，而是看到需求時能拆出資料、條件、流程和該用的語法。');
+  let h = viewTitle('中文需求 → 寫法生成訓練', '【要寫功能時用】看到需求，拆出資料、條件、流程和該用的語法（不是背影片答案）。');
   PATTERN_DRILLS.forEach(drill => {
     h += '<div class="learn-card pattern-card">';
     h += '<div class="card-kicker">' + drill.problemType + '</div>';
@@ -926,7 +918,7 @@ function renderApiCourse(){
 
 function renderThink(){
   let h = '<div class="ttl-row"><h2>觀念複習：問題 → 用什麼</h2></div>';
-  h += '<p class="maps">寫 code 前先問自己：「我現在這個念頭，是哪一種？」→ 對照下面 → 知道該用什麼。這是從「看得懂」走到「自己寫得出」的關鍵。</p>';
+  h += '<p class="maps">【寫之前用】先問自己：「我這個念頭是哪一種？」→ 對照下面 → 知道該用什麼。這是從「看得懂」走到「自己寫得出」的關鍵。</p>';
   h += '<div class="partlabel">先看「怎麼思考」一次（以 if/else 為例）</div>';
   h += '<div class="key" style="background:var(--amber-soft); color:var(--ink)">① 先問「這裡有幾種情況？」→ 不只一種 → ② 「要分別處理」＝ 需要分岔 → 用 <code>if/else</code> → ③ 「怎麼分辨？」用條件（req.url + req.method）→ ④ 每種情況填進 { } → ⑤ 都不符合 → else。<br><b>結論：看到「要依不同情況做不同事」這個念頭，就是 if/else 的時機。</b></div>';
   h += '<div class="partlabel">念頭 → 工具 對照（8 個核心）</div>';
@@ -1051,7 +1043,7 @@ function renderProgress(){
 
 function render(){ renderTabs(); renderMobileNav(); renderPanel(); renderProgress(); window.scrollTo({top:0,behavior:"smooth"}); }
 
-document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}, uiVersion:2, active:'rescue'}; active='rescue'; save(); render(); } };
+document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}, uiVersion:3, active:0}; active=0; save(); render(); } };
 
 render();
 </script>
