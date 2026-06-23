@@ -879,12 +879,12 @@ const RELATED = {
 
 const KEY = "hex-js2node-v1";
 let state = load();
-if (state.uiVersion !== 3) {
-  state.uiVersion = 3;
-  state.active = 0;
+if (state.uiVersion !== 4) {
+  state.uiVersion = 4;
+  state.active = 'plan';
   save();
 }
-let active = state.active ?? 0;
+let active = state.active ?? 'plan';
 
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {done:{}}; }catch(e){ return {done:{}}; } }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
@@ -913,6 +913,8 @@ function renderTabs(){
   tabsEl.innerHTML = "";
 
   const g0 = makeGroup("學習路線");
+  makeTab(g0, '<span class="dot"></span><span class="n"></span><span>扎實計畫</span>', active==='plan',
+    ()=>{ active='plan'; state.active='plan'; save(); render(); });
   makeTab(g0, '<span class="dot"></span><span class="n"></span><span>救進度</span>', active==='rescue',
     ()=>{ active='rescue'; state.active='rescue'; save(); render(); });
   makeTab(g0, '<span class="dot"></span><span class="n"></span><span>進度</span>', active==='progress',
@@ -942,7 +944,7 @@ function renderTabs(){
 function renderMobileNav(){
   if(!mobileNavEl) return;
   const items = [
-    { id:'rescue', label:'救進度' },
+    { id:'plan', label:'計畫' },
     { id:0, label:'課程' },
     { id:'stuck', label:'卡點' },
     { id:'patterns', label:'練習' },
@@ -975,6 +977,65 @@ function listItems(items) {
 function viewTitle(title, subtitle) {
   return '<div class="ttl-row"><h2>' + title + '</h2></div>' +
     (subtitle ? '<p class="maps">' + subtitle + '</p>' : '');
+}
+
+function renderStudyPlan() {
+  let h = viewTitle('扎實計畫・不追進度', '你是零基礎在學「後端」—— 本來就難。這頁是你的指南針：別追進度，把核心練到「默寫得出來」。');
+
+  h += '<div class="learn-card">';
+  h += '<div class="card-kicker">先有方向感</div>';
+  h += '<h3>整個課程長這樣（官方觀看順序）</h3>';
+  h += '<div class="step-card"><b>第一堂（6/12）</b><p>V8 / Node 介紹、模組原理、NPM、Todolist API、Promise / async</p></div>';
+  h += '<div class="step-card"><b>第三堂（6/26）</b><p>Express 框架　← 你大概在這附近</p></div>';
+  h += '<div class="step-card"><b>第四堂（7/3）</b><p>middleware 設計</p></div>';
+  h += '<div class="step-card"><b>第五堂（7/10）</b><p>資料庫簡介、SQL 語法、資料表管理</p></div>';
+  h += '<div class="step-card"><b>第六堂（7/17）</b><p>postgres、JOIN、order by、group by、子查詢</p></div>';
+  h += '<p class="key"><b>看到後面有資料庫 SQL 不要慌</b> —— 那是之後的事，現在完全不用碰。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card">';
+  h += '<div class="card-kicker">老實話</div>';
+  h += '<h3>別追資料庫進度，先把「後端骨架」練熟</h3>';
+  h += '<p>課程排到 7/17，但你是零基礎。硬追只會更崩潰、更想放棄。</p>';
+  h += '<p><b>策略：</b>資料庫（第五、六堂）先放著。先把「開伺服器 → 路由 → Express」這條骨架練到滾瓜爛熟。骨架穩了，資料庫之後自然接得上；骨架不穩，硬學資料庫只會卡更死。</p>';
+  h += '<p><b>直播照看</b>（吸收氣氛、有印象就好），但「練到熟」的目標只放在下面的核心四步。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card">';
+  h += '<div class="card-kicker">練到「默寫得出來」就贏</div>';
+  h += '<h3>你的核心四步（照順序，一個練熟再下一個）</h3>';
+  h += '<div class="step-card"><b>第 1 步｜最小伺服器</b><p>createServer + listen。這是後端的 Hello World，默寫得出來＝你跨過第一道門。（每日任務 Day 4）</p></div>';
+  h += '<div class="step-card"><b>第 2 步｜路由</b><p>用 if 判斷 req.method + req.url，最後接 404。（Day 6）</p></div>';
+  h += '<div class="step-card"><b>第 3 步｜Express 改寫</b><p>同樣的路由，用 app.get 寫一次，體會「框架幫你省事」。（Day 7）</p></div>';
+  h += '<div class="step-card"><b>第 4 步｜動態路由</b><p>:id（req.params）和 ?query（req.query）。（Day 8）</p></div>';
+  h += '</div>';
+
+  h += '<div class="learn-card">';
+  h += '<div class="card-kicker">每天只要 20 分鐘</div>';
+  h += '<h3>一週節奏（同一個東西，練多次）</h3>';
+  h += listItems([
+    '週一：看影片一小段 → 立刻「對著抄」一遍 code',
+    '週二：同一段用「填空」（寫法生成那頁）',
+    '週三：同一段「默寫」，卡住才偷看',
+    '週四：換下一個小東西，重複',
+    '週五：把這週的東西「整支默寫」一次',
+    '週末：休息，或把不懂的丟給我問'
+  ]);
+  h += '<p class="key"><b>每週只求：能默寫出 1~2 個小東西。</b>少而熟，勝過多而忘。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card">';
+  h += '<div class="card-kicker">卡住、想放棄時看這個</div>';
+  h += '<h3>記住三句話</h3>';
+  h += listItems([
+    '深度 &gt; 廣度：別追進度，挑核心練到熟。',
+    '練手 &gt; 看懂：手感是寫出來的，不是看出來的。',
+    '反覆 &gt; 新鮮：同一個東西練三次，比碰三個新東西有用。'
+  ]);
+  h += '<p class="key">難，是因為這件事本來就難，不是你不行。你已經走得比你想像中遠了。</p>';
+  h += '</div>';
+
+  panelEl.innerHTML = h;
 }
 
 function renderRescue() {
@@ -1100,6 +1161,7 @@ function renderTasks(){
 }
 
 function renderPanel(){
+  if(active === 'plan'){ renderStudyPlan(); return; }
   if(active === 'rescue'){ renderRescue(); return; }
   if(active === 'stuck'){ renderStuckPoints(); return; }
   if(active === 'patterns'){ renderPatterns(); return; }
@@ -1184,7 +1246,7 @@ function renderProgress(){
 
 function render(){ renderTabs(); renderMobileNav(); renderPanel(); renderProgress(); window.scrollTo({top:0,behavior:"smooth"}); }
 
-document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}, uiVersion:3, active:0}; active=0; save(); render(); } };
+document.getElementById("reset").onclick = ()=>{ if(confirm("確定清除所有學習進度？")){ state={done:{}, uiVersion:4, active:'plan'}; active='plan'; save(); render(); } };
 
 render();
 </script>
