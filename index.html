@@ -1040,6 +1040,14 @@ function renderReviewLog() {
   h += '<p class="obs"><b>我的理解（填空全對）：</b>createServer 開店、res.end 結束、listen 開門等人連。</p>';
   h += '</div>';
 
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 掃過（知道就好）</div><h3>模組原理 — 其餘小觀念</h3>';
+  h += listItems([
+    'Global 全域物件：Node 最頂層物件（像瀏覽器的 window），不用 require 就能用：console、process、__dirname…。process.env（Day 3 環境變數）就住在 process 裡。',
+    '__dirname = 檔案「所在資料夾」路徑；__filename = 檔案「本身」路徑（含檔名）。讀寫檔常用 path.join(__dirname, "檔名")。',
+    'Path 模組：跨平台處理路徑的工具 — join / basename / extname。需要再查就好。'
+  ]);
+  h += '</div>';
+
   panelEl.innerHTML = h;
 }
 
