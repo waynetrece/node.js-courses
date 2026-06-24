@@ -915,6 +915,8 @@ function renderTabs(){
   const g0 = makeGroup("學習路線");
   makeTab(g0, '<span class="dot"></span><span class="n"></span><span>扎實計畫</span>', active==='plan',
     ()=>{ active='plan'; state.active='plan'; save(); render(); });
+  makeTab(g0, '<span class="dot"></span><span class="n"></span><span>複習進度</span>', active==='review',
+    ()=>{ active='review'; state.active='review'; save(); render(); });
   makeTab(g0, '<span class="dot"></span><span class="n"></span><span>救進度</span>', active==='rescue',
     ()=>{ active='rescue'; state.active='rescue'; save(); render(); });
   makeTab(g0, '<span class="dot"></span><span class="n"></span><span>進度</span>', active==='progress',
@@ -939,6 +941,12 @@ function renderTabs(){
   const g3 = makeGroup("每日任務");
   makeTab(g3, '<span class="dot"></span><span class="n"></span><span>打卡任務（Day 1 起）</span>', active==='tasks',
     ()=>{ active='tasks'; state.active='tasks'; save(); render(); });
+
+  const g4 = makeGroup("同學筆記（liwen）");
+  makeTab(g4, '<span class="dot"></span><span class="n"></span><span>基礎篇</span>', active==='refbasics',
+    ()=>{ active='refbasics'; state.active='refbasics'; save(); render(); });
+  makeTab(g4, '<span class="dot"></span><span class="n"></span><span>CRUD 篇</span>', active==='refcrud',
+    ()=>{ active='refcrud'; state.active='refcrud'; save(); render(); });
 }
 
 function renderMobileNav(){
@@ -977,6 +985,114 @@ function listItems(items) {
 function viewTitle(title, subtitle) {
   return '<div class="ttl-row"><h2>' + title + '</h2></div>' +
     (subtitle ? '<p class="maps">' + subtitle + '</p>' : '');
+}
+
+function renderReviewLog() {
+  let h = viewTitle('複習進度記錄', '每複習完一個單元就記一筆。● = 已複習並能用自己的話講出來、○ = 還沒。');
+
+  h += '<div class="learn-card"><div class="card-kicker">進度清單</div><h3>複習到哪了</h3>';
+  h += listItems([
+    '● V8、Node.js 介紹 — 2026/6/23',
+    '○ Node 模組原理（require / module.exports）',
+    '○ NPM 套件管理',
+    '○ createServer 開伺服器',
+    '○ Todolist API（GET/POST/DELETE/PATCH）— 進行中',
+    '○ 非同步 Promise / async / await',
+    '○ Express 框架',
+    '○ middleware',
+    '○ SQL 資料庫'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 已複習</div><h3>V8、Node.js 介紹</h3>';
+  h += '<div class="blklabel">重點</div>';
+  h += listItems([
+    'V8 = Google 的 JS 引擎（翻譯機 / 大腦），把 JS 翻成電腦懂的機器碼，原本住在 Chrome。',
+    'Node.js = 把 V8「搬出瀏覽器」到電腦上，再加一層 C++/libuv（那串「鑰匙」）。',
+    '瀏覽器的 JS 因安全考量不能讀檔、不能開網路埠；Node 加了鑰匙 → 能讀寫檔案、開伺服器（http.createServer 就是靠這個）。',
+    '非同步「不乾等」（餐廳老闆比喻）—— 先有印象，Promise / async 單元再細講。'
+  ]);
+  h += '<p class="key"><b>一句話：</b>Node.js = 把瀏覽器的 JS 引擎（V8）搬到電腦上，再給它「讀檔、開網路」的超能力。</p>';
+  h += '<p class="obs"><b>我的理解（自己講對了）：</b>因為安全考量，瀏覽器不能讀檔、不能開網路埠，但 Node.js 是那把鑰匙，可以讀寫、開伺服器。</p>';
+  h += '</div>';
+
+  panelEl.innerHTML = h;
+}
+
+function renderLiwenBasics() {
+  let h = viewTitle('同學筆記・基礎篇（liwen）', '同班同學 liwen 的筆記整理，涵蓋你看過的：架構 / 環境 / 模組 / NPM。非官方，當對照參考。');
+
+  h += '<div class="learn-card"><div class="card-kicker">為什麼能用 JS 寫後端</div><h3>V8 與 Node.js</h3>';
+  h += listItems([
+    'V8 = Google 的 JS 引擎（翻譯機 / 大腦），把 JS 翻成機器碼跑得很快，原本在 Chrome。',
+    'Node.js = 把 V8 搬出瀏覽器，再配一層 C++/libuv（鑰匙）。',
+    '瀏覽器 JS 因安全不能讀檔 / 開埠；Node 能讀寫檔、開伺服器。'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">環境建置</div><h3>跑 JS 的基本操作</h3>';
+  h += listItems([
+    '終端機：cd（換資料夾）、ls（Mac 列檔）、dir（Windows 列檔）。',
+    '裝 Node 選 LTS 版本（新手用這個）。',
+    'node（互動環境，Ctrl+C 離開）／ node 檔名.js（執行整個檔案）。'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">核心模組</div><h3>require / exports / 內建模組</h3>';
+  h += '<pre><code>' + esc('// 2.js（出貨）\nmodule.exports = 值;\n\n// 1.js（進貨）\nconst content = require("./2");   // .js 可省略') + '</code></pre>';
+  h += listItems([
+    'exports 陷阱：別跟 module.exports 混用，一個檔案只用一種（混用會讓前面的失效）。',
+    '內建 http：開伺服器；path：處理跨平台路徑（join / basename / extname）。',
+    '__dirname = 目前檔案的資料夾路徑；__filename = 檔案本身（含檔名）。'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">NPM</div><h3>套件管理</h3>';
+  h += '<pre><code>' + esc('npm init -y         # 建立 package.json\nnpm install uuid    # 裝套件\nnpm install         # 照清單全部裝回來\nnpm i nodemon -g    # 全域裝 CLI 工具') + '</code></pre>';
+  h += listItems([
+    '--save（預設）= 上線必需 → dependencies；--save-dev / -D = 開發工具 → devDependencies；-g = 全域。',
+    '版本號：^1.12.0 可升 1.x 最新、~1.12.0 只升 1.12.x、1.12.0 完全鎖死。',
+    'node_modules 很肥，不要上 Git（用 npm install 隨時裝回來）。'
+  ]);
+  h += '</div>';
+
+  h += '<p class="codenote">完整原文：garden.liwen.studio／GitHub：github.com/liwenchiou/2026hexschoolNodejs</p>';
+  panelEl.innerHTML = h;
+}
+
+function renderLiwenCrud() {
+  let h = viewTitle('同學筆記・CRUD 篇（liwen）', 'Todolist 完整 CRUD 實作（你正在做的）。非官方，當對照參考。');
+
+  h += '<div class="learn-card"><div class="card-kicker">對你現在最有用</div><h3>三招</h3>';
+  h += listItems([
+    'nodemon：npm install nodemon → scripts 設 "start":"nodemon server.js" → 存檔自動重啟，不用再 Ctrl+C。',
+    '型別防呆：if (typeof data.title === "string" && data.title.trim() !== "") + try/catch → 伺服器不會莫名崩潰。',
+    'Response Handler：把重複的 writeHead + JSON.stringify 包成 successHandle / errorHandle 兩個函式，code 變乾淨。'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">回傳模組化</div><h3>Response Handler（resHandle.js）</h3>';
+  h += '<pre><code>' + esc('export const successHandle = (res, data) => {\n  res.writeHead(200, headers);\n  res.end(JSON.stringify({ status: "success", data }));\n};\n\nexport const errorHandle = (res, message, statusCode = 400) => {\n  res.writeHead(statusCode, headers);\n  res.end(JSON.stringify({ status: "false", message }));\n};') + '</code></pre>';
+  h += '<div class="blklabel">狀態碼何時用</div>';
+  h += listItems([
+    '200 成功（GET/PATCH/DELETE）、201 新增成功、400 資料錯/缺欄位、404 找不到、500 後端崩潰。'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">路由 / 取 id</div><h3>GET、DELETE、OPTIONS</h3>';
+  h += listItems([
+    'OPTIONS 預檢：跨域送 POST/PATCH/DELETE 前，瀏覽器會先偷送一個 OPTIONS 探路，不處理會被擋。',
+    '從網址取 id：const id = req.url.split("/").pop();（用 / 切開取最後一段）。',
+    '刪單筆：findIndex 找到 → splice(index, 1) 移除；刪全部：todos.length = 0。'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">讀 body</div><h3>Stream、POST、PATCH（編輯單筆）</h3>';
+  h += '<pre><code>' + esc('// 資料是一片片(chunk)來的，放在最外層、路由前面\nlet body = "";\nreq.on("data", (chunk) => { body += chunk; });\n\n// PATCH 編輯 = 找 id + 讀 body + 防呆 + 換掉\nelse if (req.url.startsWith("/todos/") && req.method === "PATCH") {\n  req.on("end", () => {\n    try {\n      const data = JSON.parse(body);\n      const id = req.url.split("/").pop();\n      const index = todos.findIndex(el => el.id === id);\n      if (typeof data.title === "string" && data.title.trim() !== "" && index !== -1) {\n        todos[index].title = data.title.trim();\n        successHandle(res, todos);\n      } else if (index === -1) {\n        errorHandle(res, "找不到該筆待辦事項", 404);\n      } else {\n        errorHandle(res, "title 欄位未填寫正確");\n      }\n    } catch (error) {\n      errorHandle(res, "資料格式錯誤");\n    }\n  });\n}') + '</code></pre>';
+  h += '</div>';
+
+  h += '<p class="codenote">完整原文：garden.liwen.studio／可下載 GitHub 原始碼對照：github.com/liwenchiou/2026hexschoolNodejs</p>';
+  panelEl.innerHTML = h;
 }
 
 function renderStudyPlan() {
@@ -1162,6 +1278,9 @@ function renderTasks(){
 
 function renderPanel(){
   if(active === 'plan'){ renderStudyPlan(); return; }
+  if(active === 'review'){ renderReviewLog(); return; }
+  if(active === 'refbasics'){ renderLiwenBasics(); return; }
+  if(active === 'refcrud'){ renderLiwenCrud(); return; }
   if(active === 'rescue'){ renderRescue(); return; }
   if(active === 'stuck'){ renderStuckPoints(); return; }
   if(active === 'patterns'){ renderPatterns(); return; }
