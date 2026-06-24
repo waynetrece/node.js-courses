@@ -995,7 +995,7 @@ function renderReviewLog() {
     '● V8、Node.js 介紹 — 2026/6/23',
     '● Node 模組原理（require / module.exports）— 2026/6/23',
     '● createServer 開伺服器（上/中/下）— 2026/6/23',
-    '○ NPM 套件管理',
+    '● NPM 套件管理 — 2026/6/23',
     '○ Todolist API（GET/POST/DELETE/PATCH）— 進行中',
     '○ 非同步 Promise / async / await',
     '○ Express 框架',
@@ -1051,6 +1051,21 @@ function renderReviewLog() {
   h += '<div class="blklabel">範例 2：黃金組合（__dirname + path + fs 讀檔）</div>';
   h += '<pre><code>' + esc('const fs = require("fs");\nconst path = require("path");\n\n// 永遠找得到「跟程式同資料夾」的 data.json\nconst filePath = path.join(__dirname, "data.json");\nfs.readFile(filePath, "utf8", (err, data) => {\n  console.log(data);\n});') + '</code></pre>';
   h += '<p class="obs">用途：安全地讀寫「跟你程式放在一起」的檔案（之後存 todos 到檔案會用到）。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 已複習</div><h3>NPM 套件管理</h3>';
+  h += '<div class="blklabel">重點</div>';
+  h += listItems([
+    'NPM = 套件商店 + 管理指令；package.json = 專案的清單 / 身分證。',
+    'npm init -y → 產生 package.json。',
+    'npm install uuid → 下載到 node_modules + 記進 package.json。',
+    'npm install（不帶名字）→ 照 package.json 把所有套件一次裝回來。',
+    '--save（預設，正式用 uuid）→ dependencies；--save-dev / -D（開發用 nodemon）→ devDependencies；-g 全域。',
+    '版本號 ^1.12.0 可升 1.x、~1.12.0 只升 1.12.x；node_modules 很肥，不上 Git。'
+  ]);
+  h += '<div class="blklabel">填空練習（答案）</div>';
+  h += '<pre><code>' + esc('npm init -y       # 建立 package.json\nnpm install uuid  # 裝套件\nnpm install       # 照清單全部裝回來') + '</code></pre>';
+  h += '<p class="key"><b>為什麼 node_modules 不上 Git：</b>只要有 package.json，任何人 npm install 就能把套件重新裝回 node_modules，所以不用上傳（而且它很肥）。這就是「npm install 的妙用」。</p>';
   h += '</div>';
 
   panelEl.innerHTML = h;
