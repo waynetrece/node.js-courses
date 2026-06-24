@@ -994,8 +994,8 @@ function renderReviewLog() {
   h += listItems([
     '● V8、Node.js 介紹 — 2026/6/23',
     '● Node 模組原理（require / module.exports）— 2026/6/23',
+    '● createServer 開伺服器（上/中/下）— 2026/6/23',
     '○ NPM 套件管理',
-    '○ createServer 開伺服器',
     '○ Todolist API（GET/POST/DELETE/PATCH）— 進行中',
     '○ 非同步 Promise / async / await',
     '○ Express 框架',
@@ -1026,6 +1026,18 @@ function renderReviewLog() {
   ]);
   h += '<p class="key"><b>卡點：</b>exports 容易漏掉 s —— 是 module.exports（有 s），不是 module.export。少了 s 會變成沒人理的屬性，別人 require 進來會拿到空的（就像之前的 startsWish，小拼字也讓東西不動）。</p>';
   h += '<p class="obs"><b>我的理解（填空對了）：</b>math.js 寫 module.exports 出貨、app.js 寫 require 進貨；只差 exports 的 s。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 已複習</div><h3>createServer 開伺服器（上 / 中 / 下）</h3>';
+  h += '<div class="blklabel">重點</div>';
+  h += listItems([
+    'http.createServer((req, res) => {...}) = 開店；每次有人連進來就跑 callback。',
+    'req = 對方的點單（req.url 路徑、req.method 方法）。',
+    'res = 你的回應三步：writeHead（貼標籤）→ write（裝內容）→ end（結束遞出）。',
+    'server.listen(3005) = 在 3005 號開門，開始等人連。'
+  ]);
+  h += '<p class="key"><b>卡點：</b>res.end() 的作用 = 告訴對方「我講完了，結束」。少了它，回應永遠沒結束 → 瀏覽器 / Postman 會一直轉、一直等（不是 undefined）。</p>';
+  h += '<p class="obs"><b>我的理解（填空全對）：</b>createServer 開店、res.end 結束、listen 開門等人連。</p>';
   h += '</div>';
 
   panelEl.innerHTML = h;
