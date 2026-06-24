@@ -1040,12 +1040,17 @@ function renderReviewLog() {
   h += '<p class="obs"><b>我的理解（填空全對）：</b>createServer 開店、res.end 結束、listen 開門等人連。</p>';
   h += '</div>';
 
-  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 掃過（知道就好）</div><h3>模組原理 — 其餘小觀念</h3>';
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 掃過 + 範例</div><h3>模組原理 — 其餘小觀念（含範例）</h3>';
   h += listItems([
-    'Global 全域物件：Node 最頂層物件（像瀏覽器的 window），不用 require 就能用：console、process、__dirname…。process.env（Day 3 環境變數）就住在 process 裡。',
-    '__dirname = 檔案「所在資料夾」路徑；__filename = 檔案「本身」路徑（含檔名）。讀寫檔常用 path.join(__dirname, "檔名")。',
-    'Path 模組：跨平台處理路徑的工具 — join / basename / extname。需要再查就好。'
+    'Global 全域物件：不用 require 就能用（console、process、__dirname、setTimeout…）。比喻：公司的公用設備，走過去就能用。process.env（Day 3 環境變數）住在 process 裡。',
+    '__dirname = 檔案「所在資料夾」路徑、__filename = 檔案「本身」路徑。比喻：檔案的「完整住址」，讀檔給完整路徑才不會找錯。',
+    'Path 模組：路徑的瑞士刀 — basename（取檔名）、extname（副檔名）、dirname（資料夾）、join（安全組路徑）。'
   ]);
+  h += '<div class="blklabel">範例 1：Global（不用 require 直接用）</div>';
+  h += '<pre><code>' + esc('console.log(process.version);  // Node 版本\nconsole.log(__dirname);        // 這檔案在哪個資料夾\nsetTimeout(() => console.log("2 秒後印"), 2000);') + '</code></pre>';
+  h += '<div class="blklabel">範例 2：黃金組合（__dirname + path + fs 讀檔）</div>';
+  h += '<pre><code>' + esc('const fs = require("fs");\nconst path = require("path");\n\n// 永遠找得到「跟程式同資料夾」的 data.json\nconst filePath = path.join(__dirname, "data.json");\nfs.readFile(filePath, "utf8", (err, data) => {\n  console.log(data);\n});') + '</code></pre>';
+  h += '<p class="obs">用途：安全地讀寫「跟你程式放在一起」的檔案（之後存 todos 到檔案會用到）。</p>';
   h += '</div>';
 
   panelEl.innerHTML = h;
