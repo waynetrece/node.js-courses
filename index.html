@@ -993,7 +993,7 @@ function renderReviewLog() {
   h += '<div class="learn-card"><div class="card-kicker">進度清單</div><h3>複習到哪了</h3>';
   h += listItems([
     '● V8、Node.js 介紹 — 2026/6/23',
-    '○ Node 模組原理（require / module.exports）',
+    '● Node 模組原理（require / module.exports）— 2026/6/23',
     '○ NPM 套件管理',
     '○ createServer 開伺服器',
     '○ Todolist API（GET/POST/DELETE/PATCH）— 進行中',
@@ -1014,6 +1014,18 @@ function renderReviewLog() {
   ]);
   h += '<p class="key"><b>一句話：</b>Node.js = 把瀏覽器的 JS 引擎（V8）搬到電腦上，再給它「讀檔、開網路」的超能力。</p>';
   h += '<p class="obs"><b>我的理解（自己講對了）：</b>因為安全考量，瀏覽器不能讀檔、不能開網路埠，但 Node.js 是那把鑰匙，可以讀寫、開伺服器。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 已複習</div><h3>Node 模組原理（require / module.exports）</h3>';
+  h += '<div class="blklabel">重點</div>';
+  h += listItems([
+    'module.exports = 「出貨窗口」：把這個檔案要給別人用的東西放上去。',
+    'require = 「進貨」：把別的檔案的東西拿來用。',
+    '方向：被別人用的檔案寫 module.exports；要用別人的寫 require。',
+    'exports.xxx 可單獨出貨，但別跟 module.exports 混用（一個檔案只用一種）。'
+  ]);
+  h += '<p class="key"><b>卡點：</b>exports 容易漏掉 s —— 是 module.exports（有 s），不是 module.export。少了 s 會變成沒人理的屬性，別人 require 進來會拿到空的（就像之前的 startsWish，小拼字也讓東西不動）。</p>';
+  h += '<p class="obs"><b>我的理解（填空對了）：</b>math.js 寫 module.exports 出貨、app.js 寫 require 進貨；只差 exports 的 s。</p>';
   h += '</div>';
 
   panelEl.innerHTML = h;
