@@ -996,6 +996,7 @@ function renderReviewLog() {
     '● Node 模組原理（require / module.exports）— 2026/6/23',
     '● createServer 開伺服器（上/中/下）— 2026/6/23',
     '● NPM 套件管理 — 2026/6/23',
+    '● Todolist 介紹與環境（UUID / try-catch / Postman）— 2026/6/23',
     '○ Todolist API（GET/POST/DELETE/PATCH）— 進行中',
     '○ 非同步 Promise / async / await',
     '○ Express 框架',
@@ -1066,6 +1067,23 @@ function renderReviewLog() {
   h += '<div class="blklabel">填空練習（答案）</div>';
   h += '<pre><code>' + esc('npm init -y       # 建立 package.json\nnpm install uuid  # 裝套件\nnpm install       # 照清單全部裝回來') + '</code></pre>';
   h += '<p class="key"><b>為什麼 node_modules 不上 Git：</b>只要有 package.json，任何人 npm install 就能把套件重新裝回 node_modules，所以不用上傳（而且它很肥）。這就是「npm install 的妙用」。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 已複習</div><h3>Todolist 介紹與環境（UUID / try-catch / 工具）</h3>';
+  h += '<div class="blklabel">UUID</div>';
+  h += '<p>每筆 todo 需要一個「唯一 id」來分辨彼此；uuidv4() 產生不重複的長字串 id（你 code 裡的 id 就是它）。</p>';
+  h += '<div class="blklabel">try / catch（重點加強）</div>';
+  h += listItems([
+    'try { 可能出錯的程式 } catch (error) { 出錯就跑這裡 }。比喻：走鋼索下面放安全網。',
+    'try 裡一出錯就立刻跳到 catch，伺服器不會崩潰；error.message = 錯誤訊息。',
+    '最常用在 JSON.parse(body)：對方傳的資料你控制不了，可能不是合法 JSON，包 try/catch 才不會讓整台伺服器掛掉（同 startsWish 崩潰的教訓）。'
+  ]);
+  h += '<pre><code>' + esc('try {\n  const data = JSON.parse(body);   // 可能爆炸\n  console.log(data.title);\n} catch (error) {\n  console.log("資料格式錯誤：", error.message);  // 接住，伺服器繼續活著\n}') + '</code></pre>';
+  h += '<div class="blklabel">工具</div>';
+  h += listItems([
+    'Postman：測 API 的工具（送 GET / POST / DELETE）。',
+    'JSON VIEW（Chrome 套件）：讓瀏覽器看 JSON 更漂亮。'
+  ]);
   h += '</div>';
 
   panelEl.innerHTML = h;
