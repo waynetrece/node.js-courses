@@ -1079,6 +1079,14 @@ function renderReviewLog() {
     '最常用在 JSON.parse(body)：對方傳的資料你控制不了，可能不是合法 JSON，包 try/catch 才不會讓整台伺服器掛掉（同 startsWish 崩潰的教訓）。'
   ]);
   h += '<pre><code>' + esc('try {\n  const data = JSON.parse(body);   // 可能爆炸\n  console.log(data.title);\n} catch (error) {\n  console.log("資料格式錯誤：", error.message);  // 接住，伺服器繼續活著\n}') + '</code></pre>';
+  h += '<div class="blklabel">JSON.parse 是什麼 + 何時用 try/catch</div>';
+  h += listItems([
+    'JSON.parse = 拆快遞箱：把對方傳來的「字串」翻成真正的物件，才能用 data.title。JSON.stringify = 反過來打包成字串寄回去。',
+    '判斷口訣：看「這行處理的『資料』是不是我能控制的」—— 不是看 code 誰寫的。',
+    '外面來的資料（別人 POST 的 body、讀進來的檔案）→ 要 try/catch；自己造的（const、push、if）→ 不用。',
+    'try/catch 主要是「接住錯誤不崩潰」，不是找 bug 工具（崩潰時 Node 本來就會告訴你錯在哪行）。'
+  ]);
+  h += '<p class="key"><b>一句話：</b>try/catch 是給「處理外面來的資料」用的安全網 —— 最經典就是 JSON.parse(別人傳的 body)。</p>';
   h += '<div class="blklabel">工具</div>';
   h += listItems([
     'Postman：測 API 的工具（送 GET / POST / DELETE）。',
