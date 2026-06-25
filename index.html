@@ -947,6 +947,12 @@ function renderTabs(){
     ()=>{ active='refbasics'; state.active='refbasics'; save(); render(); });
   makeTab(g4, '<span class="dot"></span><span class="n"></span><span>CRUD 篇</span>', active==='refcrud',
     ()=>{ active='refcrud'; state.active='refcrud'; save(); render(); });
+
+  const g5 = makeGroup("直播課堂");
+  makeTab(g5, '<span class="dot"></span><span class="n"></span><span>第一堂</span>', active==='live1',
+    ()=>{ active='live1'; state.active='live1'; save(); render(); });
+  makeTab(g5, '<span class="dot"></span><span class="n"></span><span>第二堂</span>', active==='live2',
+    ()=>{ active='live2'; state.active='live2'; save(); render(); });
 }
 
 function renderMobileNav(){
@@ -985,6 +991,91 @@ function listItems(items) {
 function viewTitle(title, subtitle) {
   return '<div class="ttl-row"><h2>' + title + '</h2></div>' +
     (subtitle ? '<p class="maps">' + subtitle + '</p>' : '');
+}
+
+function renderLive1(){
+  let h = viewTitle('直播 第一堂：前端 JS → 後端 Node.js', '核心問題：前端寫 JS 跟後端寫 Node.js 有什麼不一樣？');
+
+  h += '<div class="learn-card"><div class="card-kicker">為什麼需要後端</div><h3>前端做不到的三件事</h3>';
+  h += listItems([
+    '資料無法永久存在前端（重整就沒了）。',
+    'API 密鑰放前端會被看光，無法保護。',
+    '無法多人共享同一份資料。'
+  ]);
+  h += '<div class="blklabel">瀏覽器 vs Node.js</div>';
+  h += listItems([
+    '全域物件：瀏覽器 window/document → Node process/global',
+    '載入檔案：&lt;script&gt; → require()',
+    '執行方式：開 HTML → node app.js',
+    '存資料：localStorage → fs 模組 / 資料庫'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">模組化</div><h3>require / module.exports</h3>';
+  h += '<pre><code>' + esc('// utils.js — 匯出\nmodule.exports = { sayHello, calculateBMI };\n\n// app.js — 匯入\nconst { sayHello, calculateBMI } = require("./utils");') + '</code></pre>';
+  h += '<p class="key">重點：相對路徑要加 ./，否則 Node 會誤以為是 npm 套件。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">環境變數</div><h3>process.env</h3>';
+  h += '<p>把敏感設定（API 密鑰）跟程式碼分開：放 .env → 程式用 process.env 讀 → .env 不上 GitHub。</p>';
+  h += '<pre><code>' + esc('const smsApiKey = process.env.SMS_API_KEY;  // 讀取，不寫死') + '</code></pre>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">非同步（重要）</div><h3>fs/promises + async/await</h3>';
+  h += '<p>Node 只有「一條執行緒」，所以 I/O（讀寫檔、查 DB）一定要非同步，不然整台伺服器會卡住。</p>';
+  h += '<pre><code>' + esc('const fs = require("fs/promises");\nasync function readMembers() {\n  try {\n    const text = await fs.readFile("members.json", "utf-8");\n    return JSON.parse(text);\n  } catch (error) {\n    if (error.code === "ENOENT") return [];  // 檔案不存在 → 回空陣列\n    throw error;\n  }\n}') + '</code></pre>';
+  h += '<p class="key">重點：別用 readFileSync（會卡住）；一律 async/await + fs/promises；"utf-8" 避免中文亂碼。整個後端會一直碰到非同步。</p>';
+  h += '</div>';
+
+  panelEl.innerHTML = h;
+}
+
+function renderLive2(){
+  let h = viewTitle('直播 第二堂：NPM 與套件管理', '目標：從「會裝套件」進展到「用第三方套件做檔案上傳 API」。');
+
+  h += '<div class="learn-card"><div class="card-kicker">專案清單</div><h3>package.json 三大角色</h3>';
+  h += listItems([
+    '身分證 + 採購清單 + 指令表。',
+    'name（專案名）、main（入口檔）、scripts（自訂指令）。',
+    'dependencies（正式要的）、devDependencies（開發/測試才要的）。'
+  ]);
+  h += '<pre><code>' + esc('npm init -y            # 建立 package.json\nnpm install formidable\nnpm run start') + '</code></pre>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">require 從哪找</div><h3>node_modules 與 require 三種來源</h3>';
+  h += listItems([
+    '內建模組：require("node:fs")',
+    '本地檔案：require("./utils")（要加 ./）',
+    '第三方套件：require("formidable")（裝在 node_modules）'
+  ]);
+  h += '<p class="key">package.json 和 package-lock.json 要提交 Git；node_modules 不用（npm install 可重建）。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">環境變數</div><h3>dotenv</h3>';
+  h += '<p>用 .env 放設定（UPLOAD_DIR、MAX_FILE_SIZE_MB）。讀出來都是字串，數值要 Number() 轉。.env 要加進 .gitignore。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">二進位資料</div><h3>Buffer 基礎</h3>';
+  h += '<p>後端處理圖片、PDF 等檔案，用 Buffer 表示「二進位資料」。讀檔沒指定編碼 → 回 Buffer；指定 "utf-8" → 回字串。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">檔案上傳</div><h3>formidable</h3>';
+  h += '<p>formidable 把「網路上傳」翻譯成「硬碟上的一個檔案」—— 解析 multipart/form-data，把欄位和檔案分開。用之前要先確保上傳資料夾存在（fs.mkdirSync）。</p>';
+  h += '<div class="blklabel">上傳 API 流程</div>';
+  h += '<p>讀環境變數 → 建路由判斷（POST + URL）→ 命中就用 formidable 解析 → 回檔案資訊（原檔名、大小、路徑）。</p>';
+  h += '<p class="key">常見錯誤：忘了建上傳資料夾、curl 欄位名不對、沒處理錯誤、漏寫 return 導致重複回應。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">本週任務</div><h3>作業</h3>';
+  h += listItems([
+    '完成教練大頭照上傳 API。',
+    '本機 npm test 全綠。',
+    'curl 或 Postman 實測上傳。',
+    'GitHub Actions 通過後交 repo 連結。'
+  ]);
+  h += '</div>';
+
+  panelEl.innerHTML = h;
 }
 
 function renderReviewLog() {
@@ -1359,6 +1450,8 @@ function renderPanel(){
   if(active === 'review'){ renderReviewLog(); return; }
   if(active === 'refbasics'){ renderLiwenBasics(); return; }
   if(active === 'refcrud'){ renderLiwenCrud(); return; }
+  if(active === 'live1'){ renderLive1(); return; }
+  if(active === 'live2'){ renderLive2(); return; }
   if(active === 'rescue'){ renderRescue(); return; }
   if(active === 'stuck'){ renderStuckPoints(); return; }
   if(active === 'patterns'){ renderPatterns(); return; }
