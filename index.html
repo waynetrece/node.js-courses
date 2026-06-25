@@ -1096,6 +1096,19 @@ function renderReviewLog() {
   ]);
   h += '</div>';
 
+  h += '<div class="learn-card"><div class="card-kicker">重要觀念（安全）</div><h3>.env 不小心 commit / push 到 GitHub 怎麼辦</h3>';
+  h += '<p class="key">核心：刪掉檔案 ≠ 清乾淨。git 保留整個歷史，舊 commit 裡的 .env 還在；而且密鑰一旦 push 出去，要當作「已外洩」。</p>';
+  h += '<div class="blklabel">比喻：掉鑰匙</div>';
+  h += '<p>.env 外洩 = 鑰匙掉在路上。清 git 歷史 = 擦掉「我掉鑰匙」的記錄，但鑰匙已被人撿走 → 真正要做的是「換鎖」＝重新產生密鑰。本機清得再乾淨，也救不回已流出去的 key。</p>';
+  h += '<div class="blklabel">徹底清除三步（已 push 的完整版）</div>';
+  h += listItems([
+    '① 最重要：重新產生所有外洩的密鑰（API key / 密碼），舊的作廢。本機怎麼清都救不回已流出去的 key。',
+    '② 清 git 歷史：先確認 .gitignore 有 .env → 刪掉 .git → git init 重來（老師的方法）；或用 filter-repo / BFG 只移除 .env、保留歷史。',
+    '③ 已 push：GitHub 上的歷史還在 → 把 repo 刪掉重建或 force push。'
+  ]);
+  h += '<p class="obs">預防勝於治療：一開始就把 .env 放進 .gitignore，根本別讓它進 git。</p>';
+  h += '</div>';
+
   h += '<div class="learn-card"><div class="card-kicker">2026/6/23　● 已複習</div><h3>V8、Node.js 介紹</h3>';
   h += '<div class="blklabel">重點</div>';
   h += listItems([
