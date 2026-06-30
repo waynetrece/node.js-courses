@@ -825,6 +825,106 @@ const TASKS = [
     solution:[
       {label:'app.js', code:'const express = require("express");\nconst app = express();\n\napp.get("/coaches/:id", (req, res) => {\n  const coachId = req.params.id;        // 從路徑拿 id\n  res.status(200).json({ status: "success", coachId });\n});\n\napp.get("/courses", (req, res) => {\n  const { type, limit } = req.query;    // 從查詢字串拿\n  res.status(200).json({ status: "success", filter: { type, limit } });\n});\n\napp.listen(3000, () => console.log("http://localhost:3000"));'}
     ]
+  },
+  {
+    day:"Day 10", title:"Router 拆分與模組化（express.Router）",
+    uses:'用到 → <b>第 2 課</b> module.exports ｜ <b>Day 7</b> Express ｜ <b>Day 2</b> 單一職責',
+    concept:'<b>專案變大，所有路由塞在 app.js 會又亂又難維護。</b><code>express.Router()</code> 讓你把「每一種資源」（會員、課程…）的路由<b>拆成獨立檔案</b>，再用 <code>app.use("/members", router)</code> 掛上去。<br><br>掛載前綴會<b>自動跟 router 裡的路徑合併</b>：<code>app.use("/members", router)</code> + <code>router.get("/:id")</code> = <code>GET /members/:id</code>。<br><br>比喻：app.js 是「總機」，把不同部門的電話轉接到各自的分機檔案；分機不用知道自己被接在哪個號碼。',
+    demo:[
+      {label:'routes/members.js（分機檔案）', code:'const express = require("express");\nconst router = express.Router();\n\nrouter.get("/", (req, res) => {\n  res.status(200).json({ status: "success", message: "所有會員列表" });\n});\n\nrouter.get("/:id", (req, res) => {\n  res.status(200).json({ status: "success", memberId: req.params.id });\n});\n\nmodule.exports = router;',
+       note:'router 用法跟 app 一樣，只是最後 module.exports 出去。'},
+      {label:'app.js（總機掛載）', code:'const express = require("express");\nconst membersRouter = require("./routes/members");\nconst app = express();\n\napp.use(express.json());\napp.use("/members", membersRouter);   // 掛到 /members 前綴\n\napp.listen(3000, () => console.log("http://localhost:3000"));',
+       note:'app.use("/members", router) → router 裡的 / 就變成 /members。'}
+    ],
+    intro:'換你練：用 express.Router() 把會員路由拆出來。',
+    reqs:[
+      '建 <code>routes/members.js</code>：用 <code>express.Router()</code>，兩條路由',
+      '<code>GET /</code> → <code>{ status:"success", message:"所有會員列表" }</code>（200）',
+      '<code>GET /:id</code> → <code>{ status:"success", memberId:"id值" }</code>（200）',
+      '<code>app.js</code>：掛 express.json()、把 router 掛到 <code>/members</code>、listen 3000'
+    ],
+    hints:[
+      'router 寫法跟 app 一樣（router.get...），結尾 module.exports = router',
+      'app.use("/members", membersRouter) 掛載',
+      'router 裡寫 "/" 跟 "/:id"，前綴 /members 會自動加上去'
+    ],
+    solution:[
+      {label:'routes/members.js', code:'const express = require("express");\nconst router = express.Router();\n\nrouter.get("/", (req, res) => {\n  res.status(200).json({ status: "success", message: "所有會員列表" });\n});\n\nrouter.get("/:id", (req, res) => {\n  res.status(200).json({ status: "success", memberId: req.params.id });\n});\n\nmodule.exports = router;'},
+      {label:'app.js', code:'const express = require("express");\nconst membersRouter = require("./routes/members");\nconst app = express();\n\napp.use(express.json());\napp.use("/members", membersRouter);\n\napp.listen(3000, () => console.log("http://localhost:3000"));'}
+    ]
+  },
+  {
+    day:"Day 11", title:"CRUD 實作與資料驗證（helper 函式）",
+    uses:'用到 → <b>Day 10</b> Router ｜ <b>第 6 課</b> 陣列 find/findIndex ｜ <b>Day 8</b> params',
+    concept:'<b>用 Router 做一套完整 CRUD（增刪改查），並把重複邏輯抽成 helper 函式。</b><br><br>・<code>findById</code>：用 find 依 id 找一筆。<br>・<code>validateFields</code>：檢查必填欄位有沒有缺。<br>・狀態碼：200（查到/改到）、201（新增成功）、204（刪除成功、無內容）、400（資料錯）、404（找不到）。<br><br>資料先放「記憶體陣列」（伺服器重開就清空，之後才換資料庫）。',
+    demo:[
+      {label:'helper 函式（把重複邏輯抽出來）', code:'function findById(list, id) {\n  return list.find(item => item.id === Number(id));\n}\nfunction validateFields(body, requiredFields) {\n  return requiredFields.filter(field => !body[field]);  // 回傳「缺哪些」\n}',
+       note:'抽成 helper → 每條路由都能重複用，不用一直複製貼上。'}
+    ],
+    intro:'換你練：用 Router + helper 做會員 CRUD（必填欄位 name）。',
+    reqs:[
+      '記憶體陣列含初始 2 筆會員',
+      '實作 <code>findById</code>、<code>validateFields</code>',
+      '四條路由（前綴 /members）：GET 全部、POST 新增(201/400)、PUT 更新(200/400/404)、DELETE 刪除(204/404)',
+      'app.js 掛 cors、express.json，listen 3000'
+    ],
+    hints:[
+      'POST/PUT 先用 validateFields 檢查 name，缺就回 400',
+      'PUT/DELETE 先用 findById 找，找不到回 404',
+      'DELETE 成功回 204 + res.end()（無內容）'
+    ],
+    solution:[
+      {label:'routes/members.js', code:'const express = require("express");\nconst router = express.Router();\nlet members = [\n  { id: 1, name: "王小明" },\n  { id: 2, name: "李小花" }\n];\nlet nextId = 3;\n\nfunction findById(list, id) {\n  return list.find(item => item.id === Number(id));\n}\nfunction validateFields(body, requiredFields) {\n  return requiredFields.filter(field => !body[field]);\n}\n\nrouter.get("/", (req, res) => {\n  res.status(200).json({ status: "success", data: members });\n});\n\nrouter.post("/", (req, res) => {\n  const missing = validateFields(req.body, ["name"]);\n  if (missing.length > 0) {\n    return res.status(400).json({ status: "error", message: `缺少必填欄位：${missing.join(", ")}` });\n  }\n  const newMember = { id: nextId++, name: req.body.name };\n  members.push(newMember);\n  res.status(201).json({ status: "success", data: newMember });\n});\n\nrouter.put("/:id", (req, res) => {\n  const member = findById(members, req.params.id);\n  if (!member) return res.status(404).json({ status: "error", message: "找不到此會員" });\n  const missing = validateFields(req.body, ["name"]);\n  if (missing.length > 0) {\n    return res.status(400).json({ status: "error", message: `缺少必填欄位：${missing.join(", ")}` });\n  }\n  member.name = req.body.name;\n  res.status(200).json({ status: "success", data: member });\n});\n\nrouter.delete("/:id", (req, res) => {\n  const index = members.findIndex(item => item.id === Number(req.params.id));\n  if (index === -1) return res.status(404).json({ status: "error", message: "找不到此會員" });\n  members.splice(index, 1);\n  res.status(204).end();\n});\n\nmodule.exports = router;'},
+      {label:'app.js', code:'const express = require("express");\nconst cors = require("cors");\nconst membersRouter = require("./routes/members");\nconst app = express();\n\napp.use(cors());\napp.use(express.json());\napp.use("/members", membersRouter);\n\napp.listen(3000, () => console.log("http://localhost:3000"));'}
+    ]
+  },
+  {
+    day:"Day 12", title:"密碼安全與 bcrypt（雜湊 / 加鹽）",
+    uses:'用到 → <b>Day 7</b> async/await ｜ <b>第 2 課</b> require',
+    concept:'<b>密碼絕對不能直接存資料庫!</b>要用<b>雜湊（hash）</b>：一種「不可逆」的轉換，把密碼變成固定長度的亂碼，無法反推回原密碼。<br><br>問題：相同密碼會產生相同 hash → 駭客用「彩虹表」對照就破解了。<br>解法：<b>加鹽（salt）</b> —— 雜湊前加一段隨機字串，讓相同密碼也產生不同 hash。<br><br><code>bcrypt</code> 套件幫你把這些（雜湊 + 加鹽）一次做好，是業界標準。',
+    demo:[
+      {label:'bcrypt 三步：genSalt → hash → compare', code:'const bcrypt = require("bcrypt");\n\nasync function main() {\n  const salt = await bcrypt.genSalt(10);                       // 產生鹽（10 輪）\n  const hashed = await bcrypt.hash("myPassword", salt);        // 雜湊\n  const isMatch = await bcrypt.compare("myPassword", hashed);  // 比對\n  console.log(isMatch);  // true\n}\nmain();',
+       note:'存的是 hashed；登入時用 compare 比對（不是把密碼解回來）。'}
+    ],
+    intro:'換你練：寫 hashPassword 和 verifyPassword。',
+    reqs:[
+      '安裝並 require bcrypt',
+      '<code>hashPassword(password)</code>：用 genSalt(10) + hash()，回傳雜湊值',
+      '<code>verifyPassword(password, hash)</code>：用 compare() 比對',
+      'main 測試「正確密碼」和「錯誤密碼」各一次'
+    ],
+    hints:[
+      'bcrypt 都是非同步 → 用 await',
+      'genSalt(10) 的 10 是「強度」，越大越慢越安全',
+      'compare(明碼, 雜湊) 回傳 true / false'
+    ],
+    solution:[
+      {label:'app.js', code:'const bcrypt = require("bcrypt");\n\nasync function hashPassword(password) {\n  const salt = await bcrypt.genSalt(10);\n  return await bcrypt.hash(password, salt);\n}\n\nasync function verifyPassword(password, hash) {\n  return await bcrypt.compare(password, hash);\n}\n\nasync function main() {\n  const hashed = await hashPassword("hello123");\n  console.log("雜湊結果：", hashed);\n  console.log("正確密碼：", await verifyPassword("hello123", hashed));  // true\n  console.log("錯誤密碼：", await verifyPassword("wrongPass", hashed)); // false\n}\nmain();'}
+    ]
+  },
+  {
+    day:"Day 13", title:"JWT 概念與簽發（token）",
+    uses:'用到 → <b>Day 3</b> 環境變數（JWT_SECRET）｜ <b>Day 12</b> 安全 ｜ async',
+    concept:'<b>JWT（JSON Web Token）= 一張「登入後發給你的通行證」</b>，讓伺服器不用每次都查資料庫記住你是誰（無狀態驗證，取代 session）。<br><br>三段結構：<b>Header . Payload . Signature</b>。用 <code>jwt.sign(payload, secret, options)</code> 簽發。<br><br>⚠️ <b>重要</b>：Payload 只是 Base64 編碼（<b>不是加密</b>!）—— 任何人都能解碼讀到內容。所以<b>絕對不要在 Payload 放密碼、信用卡號</b>等敏感資料。secret 要放 .env。',
+    demo:[
+      {label:'jwt.sign 簽發 token', code:'const jwt = require("jsonwebtoken");\nconst SECRET = "my-secret-key";\n\nconst payload = { userId: 1, email: "test@example.com" };\nconst token = jwt.sign(payload, SECRET, { expiresIn: "7d" });  // 7 天後過期',
+       note:'payload 放可公開的識別資料；secret 用來簽名、驗證真偽。'}
+    ],
+    intro:'換你練：寫 generateToken(user)，secret 放 .env。',
+    reqs:[
+      '<code>.env</code>：<code>JWT_SECRET=my-gym-secret</code>',
+      '安裝 jsonwebtoken 與 dotenv',
+      '<code>generateToken(user)</code>：用 jwt.sign 簽發，payload 放 userId + email，expiresIn 7d'
+    ],
+    hints:[
+      'secret 用 process.env.JWT_SECRET 讀（不要寫死）',
+      'expiresIn 可用 "7d"、"1h"、3600（秒）',
+      'payload 不要放密碼（任何人都解得開）'
+    ],
+    solution:[
+      {label:'.env', code:'JWT_SECRET=my-gym-secret'},
+      {label:'app.js', code:'require("dotenv").config();\nconst jwt = require("jsonwebtoken");\nconst SECRET = process.env.JWT_SECRET;\n\nfunction generateToken(user) {\n  return jwt.sign(\n    { userId: user.id, email: user.email },\n    SECRET,\n    { expiresIn: "7d" }\n  );\n}\n\nconst token = generateToken({ id: 1, email: "member@gym.com" });\nconsole.log("簽發的 Token：", token);'}
+    ]
   }
 ];
 
