@@ -26,7 +26,7 @@
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--bg); color:var(--ink);
-    font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif; line-height:1.7;
+    font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif; font-size:17px; line-height:1.8;
     -webkit-font-smoothing:antialiased;}
   code{font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.9em;
     background:rgba(125,125,125,.14); padding:1px 5px; border-radius:5px;}
@@ -54,39 +54,39 @@
   .tab .dot{width:7px; height:7px; border-radius:50%; flex-shrink:0; background:transparent; border:1.5px solid var(--muted); opacity:.45;}
   .tab.done .dot{background:var(--accent); border-color:var(--accent); opacity:1;}
   .content{flex:1; min-width:0; padding:52px 60px 100px;}
-  .panel-wrap{max-width:760px; margin:0 auto;}
+  .panel-wrap{max-width:820px; margin:0 auto;}
   .badge{display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:30px; padding:0 10px;
     border-radius:8px; background:var(--accent-soft); color:var(--accent-ink); font-weight:700; font-size:14px; flex-shrink:0;}
   .ttl-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
-  .ttl-row h2{font-size:20px; font-weight:700; margin:0;}
-  .maps{margin:14px 0 0; font-size:13.5px; color:var(--muted);}
+  .ttl-row h2{font-size:24px; font-weight:700; margin:0; line-height:1.4;}
+  .maps{margin:16px 0 0; font-size:15.5px; color:var(--muted); line-height:1.8;}
   .maps code{font-size:.92em;}
-  .obs{margin:10px 0 0; font-size:13px; color:var(--muted); background:var(--accent-soft);
-    border-radius:8px; padding:8px 12px;}
+  .obs{margin:12px 0 0; font-size:15px; color:var(--muted); background:var(--accent-soft);
+    border-radius:8px; padding:12px 15px; line-height:1.75;}
   .obs b{color:var(--accent-ink);}
-  .partlabel{font-size:15px; font-weight:700; color:var(--accent); margin:30px 0 12px;
+  .partlabel{font-size:16px; font-weight:700; color:var(--accent); margin:34px 0 14px;
     padding-top:18px; border-top:2px solid var(--line);}
-  .concept{font-size:15.5px; line-height:1.85;}
+  .concept{font-size:17px; line-height:1.95;}
   .concept b{color:var(--accent); font-weight:500;}
-  .blklabel{font-size:13px; color:var(--muted); margin:16px 0 6px;}
-  pre{margin:0; background:var(--code-bg); color:var(--code-ink); padding:14px 16px; border-radius:10px;
-    overflow-x:auto; line-height:1.6;}
-  pre code{background:none; padding:0; color:inherit; font-size:13.5px; white-space:pre;
+  .blklabel{font-size:14px; color:var(--muted); margin:22px 0 9px; font-weight:700;}
+  pre{margin:0; background:var(--code-bg); color:var(--code-ink); padding:18px 20px; border-radius:10px;
+    overflow-x:auto; line-height:1.8;}
+  pre code{background:none; padding:0; color:inherit; font-size:15px; white-space:pre;
     font-variant-ligatures:none; font-feature-settings:"liga" 0,"calt" 0;}
-  .codenote{font-size:13.5px; color:var(--muted); margin:7px 0 0; padding-left:2px;}
-  .key{margin:18px 0 0; padding:13px 16px; background:var(--accent-soft); color:var(--accent-ink);
-    border-radius:10px; font-size:15px; font-weight:500;}
-  .learn-card{margin:18px 0 0; padding:18px; background:var(--card); border:1px solid var(--line);
+  .codenote{font-size:14.5px; color:var(--muted); margin:9px 0 0; padding-left:2px; line-height:1.7;}
+  .key{margin:22px 0 0; padding:17px 19px; background:var(--accent-soft); color:var(--accent-ink);
+    border-radius:10px; font-size:17px; font-weight:500; line-height:1.8;}
+  .learn-card{margin:24px 0 0; padding:28px 30px; background:var(--card); border:1px solid var(--line);
     border-radius:var(--radius); box-shadow:var(--shadow);}
-  .learn-card h3{margin:4px 0 10px; font-size:18px; line-height:1.45;}
-  .learn-card p{margin:8px 0; font-size:15px;}
-  .card-kicker{font-size:12px; color:var(--muted); font-weight:700; letter-spacing:.04em;}
-  .step-card{margin:12px 0 0; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+  .learn-card h3{margin:6px 0 16px; font-size:22px; line-height:1.45;}
+  .learn-card p{margin:12px 0; font-size:17px; line-height:1.85;}
+  .card-kicker{font-size:12.5px; color:var(--muted); font-weight:700; letter-spacing:.04em;}
+  .step-card{margin:18px 0 0; padding:20px 22px; border:1px solid var(--line); border-radius:10px;
     background:rgba(125,125,125,.05);}
-  .step-card p{margin:6px 0; font-size:14px;}
+  .step-card p{margin:10px 0; font-size:16.5px; line-height:1.8;}
   .step-card span{color:var(--muted); font-weight:700;}
-  .simple-list{margin:8px 0 0; padding-left:20px;}
-  .simple-list li{margin:6px 0;}
+  .simple-list{margin:14px 0 0; padding-left:24px; font-size:17px;}
+  .simple-list li{margin:11px 0; line-height:1.8;}
   .pattern-card pre{margin-top:6px;}
   .p2intro{font-size:15.5px; margin:0 0 6px;}
   .nodeitem{margin:16px 0 0;}
