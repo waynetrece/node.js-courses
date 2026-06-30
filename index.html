@@ -1247,8 +1247,22 @@ function renderReviewLog() {
     '○ 非同步 Promise / async / await',
     '○ Express 框架',
     '○ middleware',
-    '○ SQL 資料庫'
+    '○ SQL 資料庫',
+    '○ 【主線任務】第一週：會員資料小工具（綜合複習基準）'
   ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">複習基準（綜合）</div><h3>第一週主線任務：會員資料小工具</h3>';
+  h += '<p>這份作業把第一週的觀念全部整合成一個要「動手寫」的小工具 —— 拿來檢驗「第一週是否真的學會」。完整在「主線任務 → 第一週」分頁。</p>';
+  h += '<div class="blklabel">自我檢查：這 5 個我能寫出來嗎？</div>';
+  h += listItems([
+    'readMembers — fs/promises 讀 JSON（Day1）',
+    'filterVIP — 陣列 filter，不改原陣列（第 6 課）',
+    'sumCredits — 陣列 reduce，空陣列回 0',
+    'getGymConfig — process.env 讀設定（Day3）',
+    'getVIPSummary — 綜合前四個'
+  ]);
+  h += '<p class="key">寫得出這 5 個 + npm test 全綠 = 第一週真的學會了。卡住問 Claude（只給提示、不給解答）。</p>';
   h += '</div>';
 
   h += '<div class="learn-card"><div class="card-kicker">重要觀念（安全）</div><h3>.env 不小心 commit / push 到 GitHub 怎麼辦</h3>';
