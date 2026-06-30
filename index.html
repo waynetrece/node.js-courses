@@ -1115,7 +1115,17 @@ function renderMain1(){
   h += '<div class="learn-card"><div class="card-kicker">複習路線（點進來就照著做）</div><h3>怎麼搭配影片一步步進行</h3>';
   h += '<p>照這 5 步：每步先複習觀念 → 看對應影片 → 動手寫那個函式。</p>';
   h += '<div class="step-card"><b>步驟 1　模組化（為任務一鋪路）</b><p>【先複習】本站「複習進度 → 模組原理」</p><p>【看影片】六角預錄「require、module exports 模組設計」+「exports 模組設計」</p><p>【重點】module.exports 出貨、require 進貨；作業最後要把函式 module.exports 出去給測試用。</p></div>';
-  h += '<div class="step-card"><b>步驟 2　fs/promises 讀檔 → 寫 readMembers（任務一）</b><p>【先複習】本站「直播課堂 → 第一堂」非同步段、Obsidian Day1</p><p>【看影片】直播第一堂（fs/promises 那段）</p><p>【重點】async + await fs.readFile("路徑","utf-8") + JSON.parse。</p></div>';
+  h += '<div class="step-card"><b>步驟 2　fs/promises 讀檔 → 寫 readMembers（任務一）</b>';
+  h += '<p>【先複習】本站「直播課堂 → 第一堂」非同步段、Obsidian Day1</p>';
+  h += '<p>【看影片】沒有專門短片，在直播第一堂（fs/promises 段）+ Day1。</p>';
+  h += '<div class="blklabel">async / await（取餐單比喻）</div>';
+  h += '<p>有些事要花時間（讀檔）。<b>await = 「拿著取餐單等，等真正的東西到手」</b>。函式裡用了 await，前面就要加 async（一組的）。</p>';
+  h += '<pre><code>' + esc('const text = await fs.readFile("members.json", "utf-8");\nconsole.log(text);  // 真正的內容（飲料）✅\n\n// 忘了 await：\nconst text = fs.readFile("members.json", "utf-8");\nconsole.log(text);  // Promise（取餐單）❌ 不是內容') + '</code></pre>';
+  h += '<div class="blklabel">JSON.parse（拆箱）</div>';
+  h += '<p>檔案／網路只能傳「字串」。<b>parse = 把 JSON 字串變回「真正能用的資料」（物件 {} 或陣列 []）</b>。members.json 是 [...] → parse 後是「陣列」，任務二才能 filter。</p>';
+  h += '<div class="blklabel">readMembers 的形狀（await → parse → return）</div>';
+  h += '<pre><code>' + esc('const text = await fs.readFile(filePath, "utf-8");  // 等讀完 → 字串\nconst members = JSON.parse(text);                    // 拆箱 → 陣列\nreturn members;') + '</code></pre>';
+  h += '</div>';
   h += '<div class="step-card"><b>步驟 3　陣列 filter / reduce → 寫 filterVIP、sumCredits（任務二、三）</b><p>【先複習】本站「影音課程 → 第6課 陣列」</p><p>【看影片】JS 基礎「陣列教學」「陣列進階教學」</p><p>【重點】filter 篩 VIP（回新陣列、不改原的）；reduce 加總 credits（初始值 0，空陣列回 0）。reduce 較新，卡住問 Claude。</p></div>';
   h += '<div class="step-card"><b>步驟 4　process.env → 寫 getGymConfig（任務四）</b><p>【先複習】本站「複習進度 → Todolist 介紹與環境」、Obsidian Day3</p><p>【看影片】直播第一堂（process.env 段）</p><p>【重點】process.env.GYM_NAME / ADMIN_NAME / DEFAULT_MEMBERS_PATH，回傳物件。</p></div>';
   h += '<div class="step-card"><b>步驟 5　綜合 → 寫 getVIPSummary（任務五）</b><p>把步驟 2~4 的函式組起來：readMembers → filterVIP → sumCredits → 回傳摘要。</p><p>【動手】最後跑 npm test，看到 8 passed 就完成！</p></div>';
