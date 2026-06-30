@@ -1053,6 +1053,10 @@ function renderTabs(){
     ()=>{ active='live1'; state.active='live1'; save(); render(); });
   makeTab(g5, '<span class="dot"></span><span class="n"></span><span>第二堂</span>', active==='live2',
     ()=>{ active='live2'; state.active='live2'; save(); render(); });
+
+  const g6 = makeGroup("主線任務");
+  makeTab(g6, '<span class="dot"></span><span class="n"></span><span>第一週</span>', active==='main1',
+    ()=>{ active='main1'; state.active='main1'; save(); render(); });
 }
 
 function renderMobileNav(){
@@ -1091,6 +1095,57 @@ function listItems(items) {
 function viewTitle(title, subtitle) {
   return '<div class="ttl-row"><h2>' + title + '</h2></div>' +
     (subtitle ? '<p class="maps">' + subtitle + '</p>' : '');
+}
+
+function renderMain1(){
+  let h = viewTitle('主線任務 第一週：會員資料小工具', '把第一堂的「模組化 + fs/promises + process.env + 陣列方法」整合成一個小工具，用 Jest 測試驗證。');
+
+  h += '<div class="learn-card"><div class="card-kicker">任務總覽</div><h3>這週要做什麼</h3>';
+  h += '<p>從 JSON 檔讀會員清單 → 篩選 VIP → 計算點數 → 讀環境變數 → 產出統計摘要，最後用 Jest 測試。</p>';
+  h += '<div class="blklabel">會練到的技能（剛好都是你複習過的）</div>';
+  h += listItems([
+    'CommonJS 模組化（require / module.exports）',
+    'fs/promises 讀取 JSON 檔',
+    '陣列操作 filter / reduce',
+    'process.env 讀環境變數'
+  ]);
+  h += '<p class="codenote">期間：2026/06/12 ~ 08/30 ｜ 專案：github.com/hexschool/node-js-week1-2026</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">環境準備</div><h3>開始前</h3>';
+  h += listItems([
+    'Node 版本 ≥ 18（建議 20）：用 node -v 確認',
+    '下載專案 → npm install',
+    '複製 .env.example 成 .env：cp .env.example .env（.env 不可上 GitHub）'
+  ]);
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">五個任務（依 index.js 註解）</div><h3>任務拆解 + 用到的觀念</h3>';
+  h += '<div class="step-card"><b>任務一　readMembers(filePath)</b><p>用 fs/promises 讀指定路徑的 JSON 檔。</p><p><b>用到：</b>fs/promises + await readFile + JSON.parse（複習 Day1 / 直播第一堂）<b>　提示：</b>async function、記得 "utf-8"。</p></div>';
+  h += '<div class="step-card"><b>任務二　filterVIP(members)</b><p>回傳 level === "VIP" 的會員，<b>不可修改原陣列</b>。</p><p><b>用到：</b>陣列 filter（第 6 課）<b>　提示：</b>filter 本來就回「新陣列」，不會改到原的，剛好符合要求。</p></div>';
+  h += '<div class="step-card"><b>任務三　sumCredits(members)</b><p>加總所有人的 credits，空陣列回 0。</p><p><b>用到：</b>陣列 reduce<b>　提示：</b>reduce 給初始值 0，空陣列就會回 0。</p></div>';
+  h += '<div class="step-card"><b>任務四　getGymConfig()</b><p>從 process.env 讀 GYM_NAME、ADMIN_NAME、DEFAULT_MEMBERS_PATH，回傳物件。</p><p><b>用到：</b>process.env（複習 Day3 / 第一堂）。</p></div>';
+  h += '<div class="step-card"><b>任務五　getVIPSummary(filePath)（綜合題）</b><p>綜合前面的函式，回傳指定格式的會員統計摘要。</p><p><b>用到：</b>把任務一~三組合（先 readMembers → 再 filterVIP → 再 sumCredits）。</p></div>';
+  h += '<p class="obs">規則：需「自行撰寫 JS」，所以這裡只給觀念與提示、不給完整解答 —— 卡住再來問我，我陪你想。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">測試與驗證</div><h3>怎麼確認過關</h3>';
+  h += listItems([
+    'npm start：快速看基本輸出',
+    'npm test：完整測試（Jest）',
+    '看到 Tests: 8 passed, 8 total 就全過'
+  ]);
+  h += '<p class="key">完成條件：附 Discord 名稱、用 GitHub 提交、自己寫 JS（參考同學要附來源）、不把問題寫在程式碼裡、npm test 全綠。</p>';
+  h += '</div>';
+
+  h += '<div class="learn-card"><div class="card-kicker">常見問題</div><h3>卡住時看</h3>';
+  h += listItems([
+    'npm install 失敗 → 確認 node -v ≥ 18；不行就刪掉 node_modules/ 和 package-lock.json 再 npm install。',
+    '.env 值讀不到 → 這週還沒教 dotenv，本機 node app.js 讀不到是正常的；Jest 測試會自己用 process.env，getGymConfig 照規格寫就會過。'
+  ]);
+  h += '</div>';
+
+  panelEl.innerHTML = h;
 }
 
 function renderLive1(){
@@ -1565,6 +1620,7 @@ function renderPanel(){
   if(active === 'refcrud'){ renderLiwenCrud(); return; }
   if(active === 'live1'){ renderLive1(); return; }
   if(active === 'live2'){ renderLive2(); return; }
+  if(active === 'main1'){ renderMain1(); return; }
   if(active === 'rescue'){ renderRescue(); return; }
   if(active === 'stuck'){ renderStuckPoints(); return; }
   if(active === 'patterns'){ renderPatterns(); return; }
