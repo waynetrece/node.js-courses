@@ -1607,6 +1607,17 @@ function renderApiCourse(){
   let h = '<div class="ttl-row"><h2>Todolist API：增刪改查（CRUD）</h2></div>';
   h += '<p class="maps">整個 Todolist 系列在教的核心：讓前端對待辦「增刪改查」。用「便利貼牆」想 —— todos 是貼滿便利貼的牆。</p>';
   h += '<p class="obs"><b>路由地圖</b> — GET /todos 查全部 ｜ POST /todos 增一筆 ｜ DELETE /todos 刪全部 ｜ DELETE /todos/:id 刪一筆 ｜ PATCH /todos/:id 改一筆</p>';
+
+  h += '<div class="learn-card"><div class="card-kicker">複習路線（點進來就照著做）</div><h3>觀看安排（5 階段，你大多做過了）</h3>';
+  h += '<p>每階段：先複習觀念 → 看對應影片小節。快速過即可。</p>';
+  h += '<div class="step-card"><b>階段 1　開場 + 環境</b><p>影片：任務介紹、進入 todolist 開發、npm init 建立 package.json</p><p>【先複習】NPM（複習進度 → NPM）</p></div>';
+  h += '<div class="step-card"><b>階段 2　開伺服器 + 認識請求</b><p>影片：createServer 開伺服器、了解 request 物件、API 介紹</p><p>【先複習】createServer（複習進度 → createServer）</p></div>';
+  h += '<div class="step-card"><b>階段 3　路由 + 回傳格式</b><p>影片：首頁測試網址與 404、調整表頭回傳 JSON 與 CORS</p><p>【先複習】路由 if(req.url/method) + JSON.stringify（每日任務 Day6）</p></div>';
+  h += '<div class="step-card"><b>階段 4　CORS 預檢（OPTIONS）</b><p>影片：preflight options 檢查機制、設定 options API</p><p>【先複習】OPTIONS 預檢「先送一個 OPTIONS 探路」（同學筆記 → CRUD 篇 / 直播第二堂）</p></div>';
+  h += '<div class="step-card"><b>階段 5　讀取 + 新增 POST</b><p>影片：取得所有代辦+UUID、POST router 環境、接收 body、新增 todo POST API</p><p>【先複習】UUID、req.on(data/end)、JSON.parse、try/catch（複習進度 → Todolist 介紹與環境）</p></div>';
+  h += '<p class="obs">DELETE / PATCH 影片沒單獨小節 —— 你從每日任務 + 自己動手學過了。</p>';
+  h += '</div>';
+
   API_STAGES.forEach(s=>{
     h += '<div class="partlabel">'+s.title+'</div>';
     h += '<p class="p2intro">'+s.what+'</p>';
