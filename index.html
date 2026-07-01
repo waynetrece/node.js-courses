@@ -1534,6 +1534,21 @@ function renderStudyPlan() {
   h += '<p class="key">難，是因為這件事本來就難，不是你不行。你已經走得比你想像中遠了。</p>';
   h += '</div>';
 
+  h += '<div class="learn-card"><div class="card-kicker">雙軌學習</div><h3>六角主線 + Udemy 補 JS 地基</h3>';
+  h += '<div class="blklabel">兩條軌道</div>';
+  h += listItems([
+    '軌道 A（地基）：Udemy JS —— 把 JS 打穩、補你的洞（陣列、closure…）。每天 15~20 分。',
+    '軌道 B（主線）：六角 Node —— 先聽有概念 → 回來跑複習五步 → 記錄打勾。'
+  ]);
+  h += '<p class="key">為什麼有效：JS 是 Node 的地基。JS 穩了，Node 複習就輕鬆。先概念、後複習、慢慢來，不追進度。</p>';
+  h += '<div class="blklabel">Udemy 怎麼挑（完整對照見 Obsidian 08-Udemy對照地圖）</div>';
+  h += listItems([
+    '補洞（現在）：Ch5 / 6 / 8 / 9 JS 基礎 —— 先看 Ch8 陣列 filter/map/reduce。',
+    '對照（六角卡住時）：Ch12 Node、13 Express、19 RESTful、20 Middleware、15/17/18 資料庫、21/22 Auth。',
+    '先跳過：HTML/CSS、DOM、EJS、React/Next/MERN。'
+  ]);
+  h += '</div>';
+
   panelEl.innerHTML = h;
 }
 
